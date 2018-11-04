@@ -1,52 +1,13 @@
 /* jshint node: true, esnext: true */
+'use strict';
 
-const elasticsearch = require('elasticsearch');
 const http = require('http');
 const url = require('url');
-const htmlEncode = require('js-htmlencode');
-const downsize = require('downsize');
+
+const transform_results = require('./transform_results');
+const search = require('./search');
 
 const server_port = 9615;
-const result_description_length = 250;
-
-var client = new elasticsearch.Client({
-  host: 'localhost:9200',
-  log: 'info'
-});
-
-function query(q, page, page_size) {
-  var body = {
-      "query": {
-          "query_string": {
-              "query": q,
-              "default_operator": "AND"
-          }
-      },
-      "highlight": {
-          "order" : "score",
-          "require_field_match": false,
-          "encoder": "html",
-          "fields": {
-              "*": {
-                  "number_of_fragments" : 1,
-                  "fragment_size" : result_description_length
-              }
-          }
-      },
-      "_source": [
-        "metadata.title", "metadata.name", "metadata.description",
-        "references", "size", "last-seen", "first-seen"
-      ]
-  };
-
-  return client.search({
-    index: 'ipfs',
-    body: body,
-    size: page_size,
-    from: page*page_size,
-    timeout: '15s'
-  });
-}
 
 function error_response(response, code, error) {
   console.trace(code+": "+error.message);
@@ -56,113 +17,6 @@ function error_response(response, code, error) {
     "error": error
   }));
   response.end();
-}
-
-function get_title(result) {
-  // Get title from result
-
-  // Highlights take preference
-  var hl = result.highlight;
-
-  if (hl) {
-    const highlight_priority = [
-      "metadata.title", "references.name"
-    ];
-
-    // Return the first one from the priority list
-    for (var i=0; i<highlight_priority.length; i++) {
-      if (hl[highlight_priority[i]]) {
-        return hl[highlight_priority[i]][0];
-      }
-    }
-  }
-
-  // Try metadata
-  var src = result._source;
-  var titles = [];
-
-  if ("metadata" in src) {
-    const metadata_priority = [
-      "title", "name"
-    ];
-
-    metadata_priority.forEach(function (item) {
-      if (src.metadata[item]) {
-        titles.push(src.metadata[item][0]);
-      }
-    });
-  }
-
-  // Try references
-  src.references.forEach(function (item) {
-    if (item.name && item.name.length > 1) {
-      titles.push(item.name);
-    }
-  });
-
-  // Pick longest title
-  if (titles.length > 0) {
-    titles.sort(function (a, b) { return b.length - a.length; });
-
-    return htmlEncode.htmlEncode(titles[0]);
-  } else {
-    // Fallback to id
-    return htmlEncode.htmlEncode(result._id);
-  }
-}
-
-function get_description(result) {
-  // Use highlights, if available
-  if (result.highlight) {
-    if (result.highlight.content) {
-      return result.highlight.content[0];
-    }
-
-    if (result.highlight["links.Name"]) {
-      // Reference name matching
-      return "Links to &ldquo;"+result.highlight["links.Name"][0]+"&rdquo;";
-    }
-
-    if (result.highlight["links.Hash"]) {
-      // Reference name matching
-      return "Links to &ldquo;"+result.highlight["links.Hash"][0]+"&rdquo;";
-    }
-  }
-
-  var metadata = result._source.metadata;
-  if (metadata) {
-    // Description, if available
-    if (metadata.description) {
-      return htmlEncode.htmlEncode(
-        downsize(metadata.description[0], {
-          "characters": result_description_length, "append": "..."
-        })
-      );
-    }
-
-  }
-
-  // Default to nothing
-  return null;
-}
-
-function transform_results(results) {
-  var hits = [];
-
-  results.hits.forEach(function (item) {
-    hits.push({
-      "hash": item._id,
-      "title": get_title(item),
-      "description": get_description(item),
-      "type": item._type,
-      "size": item._source.size,
-      "first-seen": item._source['first-seen'],
-      "last-seen": item._source['last-seen']
-    });
-  });
-
-  // Overwrite existing list of hits
-  results.hits = hits;
 }
 
 console.info("Starting server on http://localhost:"+server_port+"/");
@@ -195,7 +49,7 @@ http.createServer(function(request, response) {
         }
       }
 
-      query(parsed_url.query.q, page, page_size).then(function (body) {
+      search(parsed_url.query.q, page, page_size).then(function (body) {
         console.info(request.url + " 200: Returning " + body.hits.hits.length + " results");
 
         body.hits.page_size = page_size;
