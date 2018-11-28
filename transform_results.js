@@ -103,7 +103,8 @@ function transform_results(results) {
       "type": item._type,
       "size": item._source.size,
       "first-seen": item._source['first-seen'],
-      "last-seen": item._source['last-seen']
+      "last-seen": item._source['last-seen'],
+      "score": item._score
     });
   });
 
