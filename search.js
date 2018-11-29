@@ -129,7 +129,7 @@ function search(q, page, page_size) {
     },
     "_source": [
       "metadata.title", "metadata.name", "metadata.description",
-      "references", "size", "last-seen", "first-seen"
+      "metadata.Content-Type", "references", "size", "last-seen", "first-seen"
     ]
   };
 

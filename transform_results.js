@@ -92,11 +92,20 @@ function get_description(result) {
   return null;
 }
 
+function get_mimetype(result) {
+  var metadata = result._source.metadata;
+  if (metadata && 'Content-Type' in metadata) {
+    var type = result._source.metadata['Content-Type'][0];
+    // "text/html; charset=ISO-8859-1" -> "text/html"
+    return type.split(';', 1)[0];
+  }
+}
+
 function transform_results(results) {
   var hits = [];
 
   results.hits.forEach(function (item) {
-    hits.push({
+    var obj = {
       "hash": item._id,
       "title": get_title(item),
       "description": get_description(item),
@@ -105,7 +114,12 @@ function transform_results(results) {
       "first-seen": item._source['first-seen'],
       "last-seen": item._source['last-seen'],
       "score": item._score
-    });
+    };
+
+    var mimetype = get_mimetype(item);
+    if (mimetype) obj["mimetype"] = mimetype;
+
+    hits.push(obj);
   });
 
   // Overwrite existing list of hits
