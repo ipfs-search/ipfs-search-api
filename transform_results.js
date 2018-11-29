@@ -3,6 +3,7 @@
 
 const htmlEncode = require('js-htmlencode');
 const downsize = require('downsize');
+const result_description_length = 250;
 
 function get_title(result) {
   // Get title from result

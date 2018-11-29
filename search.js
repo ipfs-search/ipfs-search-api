@@ -2,7 +2,6 @@
 'use strict';
 
 const elasticsearch = require('elasticsearch');
-const result_description_length = 250;
 
 var client = new elasticsearch.Client({
   host: 'localhost:9200',
