@@ -6,9 +6,15 @@
   "author": "Mathijs de Bruin <mathijs@mathijsfietst.nl> (http://mathijsfietst.nl/)",
   "license": "AGPL-3.0",
   "dependencies": {
+    "@elastic/elasticsearch": "^7.8.0",
     "downsize": "0.0.8",
-    "elasticsearch": "^15.2.0",
+    "express": "^4.17.1",
     "js-htmlencode": "^0.2.0",
     "mustache": "^2.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.5.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0"
   }
 }

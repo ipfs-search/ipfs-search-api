@@ -1,135 +1,132 @@
-/* jshint node: true, esnext: true */
-'use strict';
+const { Client } = require('@elastic/elasticsearch');
 
-const elasticsearch = require('elasticsearch');
-
-var client = new elasticsearch.Client({
-  host: 'localhost:9200',
-  log: 'info'
+const client = new Client({
+  node: 'http://localhost:9200',
+  log: 'info',
 });
 
-function search(q, page, page_size) {
-  var body = {
-    "query": {
-      "function_score": {
-        "query": {
-          "query_string": {
-            "query": q,
-            "default_operator": "AND"
-          }
+function search(q, page, pageSize) {
+  const body = {
+    query: {
+      function_score: {
+        query: {
+          query_string: {
+            query: q,
+            default_operator: 'AND',
+          },
         },
-        "score_mode": "sum",
-        "boost_mode": "multiply",
-        "functions": [
+        score_mode: 'sum',
+        boost_mode: 'multiply',
+        functions: [
           {
-            "weight": 1
+            weight: 1,
           },
           {
-            "filter": {
-              "range": {
-                "last-seen": {
-                  "from": "now-3M"
-                }
-              }
+            filter: {
+              range: {
+                'last-seen': {
+                  from: 'now-3M',
+                },
+              },
             },
-            "weight": 1
+            weight: 1,
           },
           {
-            "filter": {
-              "range": {
-                "last-seen": {
-                  "from": "now-1M"
-                }
-              }
+            filter: {
+              range: {
+                'last-seen': {
+                  from: 'now-1M',
+                },
+              },
             },
-            "weight": 1
+            weight: 1,
           },
           {
-            "filter": {
-              "range": {
-                "last-seen": {
-                  "from": "now-1d"
-                }
-              }
+            filter: {
+              range: {
+                'last-seen': {
+                  from: 'now-1d',
+                },
+              },
             },
-            "weight": 1
+            weight: 1,
           },
           // Also boost first-seen if they don't have last-seen defined
           {
-            "filter": {
-              "bool": {
-                "must_not": [
-                  {"exists": {"field": "last-seen"}}
+            filter: {
+              bool: {
+                must_not: [
+                  { exists: { field: 'last-seen' } },
                 ],
-                "must": [
+                must: [
                   {
-                    "range": {
-                      "first-seen": {
-                        "from": "now-3M"
-                      }
-                    }
-                  }
-                ]
-              }
+                    range: {
+                      'first-seen': {
+                        from: 'now-3M',
+                      },
+                    },
+                  },
+                ],
+              },
             },
-            "weight": 1
+            weight: 1,
           },
           {
-            "filter": {
-              "bool": {
-                "must_not": [
-                  {"exists": {"field": "last-seen"}}
+            filter: {
+              bool: {
+                must_not: [
+                  { exists: { field: 'last-seen' } },
                 ],
-                "must": [
+                must: [
                   {
-                    "range": {
-                      "first-seen": {
-                        "from": "now-1M"
-                      }
-                    }
-                  }
-                ]
-              }
+                    range: {
+                      'first-seen': {
+                        from: 'now-1M',
+                      },
+                    },
+                  },
+                ],
+              },
             },
-            "weight": 1
+            weight: 1,
           },
           {
-            "filter": {
-              "bool": {
-                "must_not": [
-                  {"exists": {"field": "last-seen"}}
+            filter: {
+              bool: {
+                must_not: [
+                  { exists: { field: 'last-seen' } },
                 ],
-                "must": [
+                must: [
                   {
-                    "range": {
-                      "first-seen": {
-                        "from": "now-1d"
-                      }
-                    }
-                  }
-                ]
-              }
+                    range: {
+                      'first-seen': {
+                        from: 'now-1d',
+                      },
+                    },
+                  },
+                ],
+              },
             },
-            "weight": 1
-          }
-        ]
-      }
+            weight: 1,
+          },
+        ],
+      },
     },
-    "highlight": {
-      "order": "score",
-      "require_field_match": false,
-      "encoder": "html",
-      "fields": {
-        "*": {
-          "number_of_fragments": 1,
-          "fragment_size": 250
-        }
-      }
+    highlight: {
+      order: 'score',
+      require_field_match: false,
+      encoder: 'html',
+      fields: {
+        '*': {
+          number_of_fragments: 1,
+          fragment_size: 250,
+        },
+      },
     },
-    "_source": [
-      "metadata.title", "metadata.name", "metadata.description",
-      "metadata.Content-Type", "references", "size", "last-seen", "first-seen"
-    ]
+    _source: [
+      'metadata.title', 'metadata.name', 'metadata.description',
+      'metadata.Content-Type', 'references', 'size', 'last-seen', 'first-seen',
+    ],
   };
 
   // Decay functions are not working, somehow!
@@ -172,11 +169,11 @@ function search(q, page, page_size) {
   // }
 
   return client.search({
-    index: 'ipfs',
-    body: body,
-    size: page_size,
-    from: page*page_size,
-    timeout: '15s'
+    index: 'ipfs_*',
+    body,
+    size: pageSize,
+    from: page * pageSize,
+    timeout: '15s',
   });
 }
 
