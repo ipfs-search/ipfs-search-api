@@ -6,11 +6,12 @@ const app = express();
 const port = 9615;
 
 function error(res, code, err) {
-  console.debug(`${code}: ${err}`);
-  res.json({ error: err }).status(code).end();
+  console.error(`${code}: ${err}`);
+  console.trace(err);
+  res.json({ error: `${err}` }).status(code).end();
 }
 
-app.get('/search', (req, res) => {
+app.get('/search', (req, res, next) => {
   const maxPage = 100;
   const pageSize = 15;
 
@@ -29,7 +30,7 @@ app.get('/search', (req, res) => {
     }
   }
 
-  search(req.query.q, page, pageSize).then((r) => {
+  search(req.query.q, req.query.type, page, pageSize).then((r) => {
     const { hits } = r.body;
 
     console.debug(`${req.url} 200: Returning ${hits.hits.length} results`);
@@ -40,10 +41,20 @@ app.get('/search', (req, res) => {
     transform(hits);
 
     res.json(hits).end();
-  }, (e) => {
-    error(res, 500, 'Internal server error');
-    console.trace(e);
-  });
+  }).catch(next);
+});
+
+app.use((err, req, res, next) => {
+  if (process.env.NODE_ENV === 'production') {
+    // Don't leak details in production
+    error(res, 500, 'Internal Server Error');
+  }
+
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  error(res, 500, err);
 });
 
 app.listen(port, () => console.log(`ipfs-search search API listening on port ${port}!`));

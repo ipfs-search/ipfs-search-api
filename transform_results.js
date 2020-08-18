@@ -113,7 +113,7 @@ function getType(item) {
     return 'directory';
   }
 
-  throw Error('Unknown type');
+  throw new Error('Unknown type');
 }
 
 function transform_results(results) {
