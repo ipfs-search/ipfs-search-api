@@ -4,9 +4,9 @@ const htmlEncode = require('js-htmlencode');
 const downsize = require('downsize');
 const types = require('./types');
 
-const result_description_length = 250;
+const resultDescriptionLength = 250;
 
-function get_title(result) {
+function getTitle(result) {
   // Get title from result
 
   // Highlights take preference
@@ -60,7 +60,7 @@ function get_title(result) {
   return htmlEncode.htmlEncode(result._id);
 }
 
-function get_description(result) {
+function getDescription(result) {
   // Use highlights, if available
   if (result.highlight) {
     if (result.highlight.content) {
@@ -84,7 +84,7 @@ function get_description(result) {
     if (metadata.description) {
       return htmlEncode.htmlEncode(
         downsize(metadata.description[0], {
-          characters: result_description_length, append: '...',
+          characters: resultDescriptionLength, append: '...',
         }),
       );
     }
@@ -94,7 +94,7 @@ function get_description(result) {
   return null;
 }
 
-function get_mimetype(result) {
+function getMimetype(result) {
   const { metadata } = result._source;
   if (metadata && 'Content-Type' in metadata) {
     const type = result._source.metadata['Content-Type'][0];
@@ -103,14 +103,14 @@ function get_mimetype(result) {
   }
 }
 
-function transform_results(results) {
+function transformResults(results) {
   const hits = [];
 
   results.hits.forEach((item) => {
     const obj = {
       hash: item._id,
-      title: get_title(item),
-      description: get_description(item),
+      title: getTitle(item),
+      description: getDescription(item),
       type: types.typeFromIndex(item._index),
       size: item._source.size,
       'first-seen': item._source['first-seen'],
@@ -118,7 +118,7 @@ function transform_results(results) {
       score: item._score,
     };
 
-    const mimetype = get_mimetype(item);
+    const mimetype = getMimetype(item);
     if (mimetype) obj.mimetype = mimetype;
 
     hits.push(obj);
@@ -128,4 +128,4 @@ function transform_results(results) {
   results.hits = hits;
 }
 
-module.exports = transform_results;
+module.exports = transformResults;
