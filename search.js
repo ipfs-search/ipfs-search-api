@@ -154,45 +154,6 @@ function search(q, type, page, pageSize) {
     ],
   };
 
-  // Decay functions are not working, somehow!
-  // {
-  //     // The relevancy of old documents is multiplied by at least one.
-  //     "weight": 1
-  // },
-  // {
-  //     // Seen today get a big boost
-  //     "weight": 5,
-  //     "gauss": {
-  //         "last-seen": {
-  //             "origin": "2017-04-07", // Change to current date
-  //             "scale": "31d",
-  //             "decay": 0.5
-  //         }
-  //     }
-  // },
-  // {
-  //     // Seen this month gets a smaller boost blished this year get a boost
-  //     "weight": 2,
-  //     "gauss": {
-  //         "last-seen": {
-  //             "origin": "2017-04-07", // Change to current date
-  //             "scale": "1M",
-  //             "decay": 0.5
-  //         }
-  //     }
-  // },
-  // {
-  //     // Seen in last 3 months get a smaller boost
-  //     "weight": 1,
-  //     "gauss": {
-  //         "last-seen": {
-  //             "origin": "2017-04-07", // Change to current date
-  //             "scale": "3M",
-  //             "decay": 0.5
-  //         }
-  //     }
-  // }
-
   return client.search({
     index: types.indexesFromType(type || qType),
     body,
