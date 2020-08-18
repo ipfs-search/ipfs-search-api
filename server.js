@@ -36,7 +36,10 @@ app.get('/search', (req, res, next) => {
     console.debug(`${req.url} 200: Returning ${hits.hits.length} results`);
 
     hits.page_size = pageSize;
-    hits.page_count = Math.ceil(hits.total / pageSize);
+    hits.page_count = Math.ceil(hits.total.value / pageSize);
+
+    // Backwards compatibility
+    hits.total = hits.total.value;
 
     transform(hits);
 
