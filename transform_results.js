@@ -2,6 +2,7 @@
 
 const htmlEncode = require('js-htmlencode');
 const downsize = require('downsize');
+const types = require('./types');
 
 const result_description_length = 250;
 
@@ -110,7 +111,7 @@ function transform_results(results) {
       hash: item._id,
       title: get_title(item),
       description: get_description(item),
-      type: item._type,
+      type: types.typeFromIndex(item._index),
       size: item._source.size,
       'first-seen': item._source['first-seen'],
       'last-seen': item._source['last-seen'],
