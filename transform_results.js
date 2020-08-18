@@ -102,6 +102,20 @@ function get_mimetype(result) {
   }
 }
 
+function getType(item) {
+  const idx = item._index;
+
+  if (idx.includes('files')) {
+    return 'file';
+  }
+
+  if (idx.includes('directories')) {
+    return 'directory';
+  }
+
+  throw Error('Unknown type');
+}
+
 function transform_results(results) {
   const hits = [];
 
@@ -110,7 +124,7 @@ function transform_results(results) {
       hash: item._id,
       title: get_title(item),
       description: get_description(item),
-      type: item._type,
+      type: getType(item),
       size: item._source.size,
       'first-seen': item._source['first-seen'],
       'last-seen': item._source['last-seen'],
