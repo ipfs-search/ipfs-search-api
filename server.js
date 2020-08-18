@@ -8,6 +8,12 @@ const port = 9615;
 function error(res, code, err) {
   console.error(`${code}: ${err}`);
   console.trace(err);
+
+  // Unwrap ES errors.
+  if ('body' in err && 'error' in err.body) {
+    console.trace(err.body.error);
+  }
+
   res.json({ error: `${err}` }).status(code).end();
 }
 
