@@ -5,6 +5,7 @@ const downsize = require('downsize');
 const types = require('./types');
 
 const resultDescriptionLength = 250;
+const maxReferences = 5;
 
 function getTitle(result) {
   // Get title from result
@@ -56,8 +57,9 @@ function getTitle(result) {
 
     return htmlEncode.htmlEncode(titles[0]);
   }
-  // Fallback to id
-  return htmlEncode.htmlEncode(result._id);
+
+  // No sensible title, default to null
+  return null;
 }
 
 function getDescription(result) {
@@ -101,6 +103,9 @@ function getMimetype(result) {
     // "text/html; charset=ISO-8859-1" -> "text/html"
     return type.split(';', 1)[0];
   }
+
+  // No mimetype, return null
+  return null;
 }
 
 function transformResults(results) {
@@ -112,14 +117,13 @@ function transformResults(results) {
       title: getTitle(item),
       description: getDescription(item),
       type: types.typeFromIndex(item._index),
-      size: item._source.size,
+      size: item._source.size || null,
       'first-seen': item._source['first-seen'],
       'last-seen': item._source['last-seen'],
       score: item._score,
+      references: item._source.references.slice(0, maxReferences),
+      mimetype: getMimetype(item),
     };
-
-    const mimetype = getMimetype(item);
-    if (mimetype) obj.mimetype = mimetype;
 
     hits.push(obj);
   });
