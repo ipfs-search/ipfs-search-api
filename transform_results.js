@@ -121,7 +121,7 @@ function transformResults(results) {
       'first-seen': item._source['first-seen'],
       'last-seen': item._source['last-seen'],
       score: item._score,
-      references: item._source.references.slice(0, maxReferences),
+      references: item._source.references && item._source.references.slice(0, maxReferences),
       mimetype: getMimetype(item),
     };
 
