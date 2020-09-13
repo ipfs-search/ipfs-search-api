@@ -10,7 +10,7 @@ function error(res, code, err) {
   console.trace(err);
 
   // Unwrap ES errors.
-  if ('body' in err && 'error' in err.body) {
+  if (typeof err === 'object' && 'body' in err && 'error' in err.body) {
     console.trace(err.body.error);
   }
 
