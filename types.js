@@ -1,6 +1,6 @@
 const indexes = [
-  'ipfs_directories',
-  'ipfs_files',
+  'ipfs_directories_v7',
+  'ipfs_files_v7',
 ];
 
 const types = [
