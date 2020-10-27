@@ -72,6 +72,8 @@ const q = {
     query,
     fields,
     default_operator: 'AND',
+    // analyzer: 'stop', gives performance problems as it generates single-letter tokens
+    // quote_analyzer: 'keyword',
   }),
   // Bias more recent items
   recent: (query) => ({
