@@ -1,6 +1,7 @@
 const { Client } = require('@elastic/elasticsearch');
 
 const types = require('./types');
+const query = require('./query');
 
 const client = new Client({
   node: 'http://localhost:9200',
@@ -32,153 +33,11 @@ function search(q, type, page, pageSize) {
   const { qType, qWithoutType } = typeFromQ(q);
 
   const body = {
-    query: {
-      boosting: {
-        positive: {
-          function_score: {
-            query: {
-              query_string: {
-                query: qWithoutType,
-                default_operator: 'AND',
-                fields: [
-                  '"hash"^5',
-                  '"metadata.isbn"^5',
-                  'metadata.title^5',
-                  'metadata.name^5',
-                  'references.name^5',
-                  'metadata.author^4',
-                  'metadata.xmpDM:artist^4',
-                  '"references.parent_hash"^3',
-                  'metadata.xmpDM:composer^3',
-                  'metadata.description^3',
-                  'metadata.keywords^3',
-                  'links.Name^3',
-                  'metadata.xmpDM:album^2',
-                  'metadata.xmpDM:albumArtist^2',
-                  'metadata.publisher^2',
-                  'metadata.producer^2',
-                  '"links.Hash"^2',
-                  'metadata.Content-Type^2',
-                  'content',
-                  'fingerprint',
-                  // 'metadata.Author', // TO INDEX!!!
-                  // 'metadata.Keywords'
-                  // 'metadata.creator',
-                  // 'metadata.contributor'
-                  // 'metadata.subject',
-                  'urls',
-                ],
-              },
-            },
-            score_mode: 'sum',
-            boost_mode: 'multiply',
-            functions: [
-              {
-                weight: 1,
-              },
-              {
-                filter: {
-                  range: {
-                    'last-seen': {
-                      from: 'now-3M',
-                    },
-                  },
-                },
-                weight: 1,
-              },
-              {
-                filter: {
-                  range: {
-                    'last-seen': {
-                      from: 'now-1M',
-                    },
-                  },
-                },
-                weight: 1,
-              },
-              {
-                filter: {
-                  range: {
-                    'last-seen': {
-                      from: 'now-1d',
-                    },
-                  },
-                },
-                weight: 1,
-              },
-              // Also boost first-seen if they don't have last-seen defined
-              {
-                filter: {
-                  bool: {
-                    must_not: [
-                      { exists: { field: 'last-seen' } },
-                    ],
-                    must: [
-                      {
-                        range: {
-                          'first-seen': {
-                            from: 'now-3M',
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-                weight: 1,
-              },
-              {
-                filter: {
-                  bool: {
-                    must_not: [
-                      { exists: { field: 'last-seen' } },
-                    ],
-                    must: [
-                      {
-                        range: {
-                          'first-seen': {
-                            from: 'now-1M',
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-                weight: 1,
-              },
-              {
-                filter: {
-                  bool: {
-                    must_not: [
-                      { exists: { field: 'last-seen' } },
-                    ],
-                    must: [
-                      {
-                        range: {
-                          'first-seen': {
-                            from: 'now-1d',
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-                weight: 1,
-              },
-            ],
-          },
-        },
-        negative: {
-          bool: {
-            filter: [
-              { exists: { field: 'metadata.title' } },
-              { exists: { field: 'metadata.name' } },
-              { exists: { field: 'references.Name' } },
-            ],
-          },
-        },
-        negative_boost: 0.1,
-      },
-    },
+    query: query.boostUnnamed(
+      query.recent(
+        query.string(qWithoutType, query.queryFields),
+      ),
+    ),
     highlight: {
       order: 'score',
       require_field_match: false,
@@ -190,10 +49,7 @@ function search(q, type, page, pageSize) {
         },
       },
     },
-    _source: [
-      'metadata.title', 'metadata.name', 'metadata.description',
-      'metadata.Content-Type', 'references', 'size', 'last-seen', 'first-seen',
-    ],
+    _source: query.sourceFields,
   };
 
   return client.search({
