@@ -191,7 +191,7 @@ const q = {
           ],
         },
       },
-      negative_boost: 0.1,
+      negative_boost: 0.5,
     },
   }),
 };
