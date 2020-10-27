@@ -109,19 +109,19 @@ function getMimetype(result) {
 }
 
 function getAuthor(src) {
-  return (
+  return src.metadata && ((
     src.metadata.Author && src.metadata.Author[0]
   ) || (
     src.metadata.author && src.metadata.author[0]
-  );
+  ));
 }
 
 function getPublisher(src) {
-  return src.metadata.publisher && src.metadata.publisher[0];
+  return src.metadata && src.metadata.publisher && src.metadata.publisher[0];
 }
 
 function getCreationDate(src) {
-  return src.metadata['Creation-Date'] && src.metadata['Creation-Date'][0];
+  return src.metadata && src.metadata['Creation-Date'] && src.metadata['Creation-Date'][0];
 }
 
 function transformResults(results) {
