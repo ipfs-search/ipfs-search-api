@@ -28,8 +28,17 @@ const q = {
     'urls',
   ],
   sourceFields: [
-    'metadata.title', 'metadata.name', 'metadata.description',
-    'metadata.Content-Type', 'references', 'size', 'last-seen', 'first-seen',
+    'metadata.title',
+    'metadata.name',
+    'metadata.Author',
+    'metadata.description',
+    'metadata.Content-Type',
+    'metadata.Creation-Date',
+    'metadata.publisher',
+    'references',
+    'size',
+    'last-seen',
+    'first-seen',
   ],
   // Create a simple boolean string query
   string: (query, fields) => ({
