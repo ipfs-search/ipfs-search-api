@@ -1,10 +1,37 @@
 const q = {
+  mimeTypes: {
+    document: [
+      // eBook types
+      'application/x-mobipocket-ebook',
+      'application/epub+zip',
+      'application/vnd.amazon.ebook',
+      // Scanned documents
+      'image/vnd.djvu',
+      'application/pdf',
+      // HTML/plain text
+      'text/html',
+      'text/plain',
+      // Text editors
+      'application/postscript',
+      'application/rtf',
+      // Open Office et al.
+      'application/vnd.oasis.opendocument.text',
+      'application/vnd.sun.xml.writer',
+      'application/vnd.stardivision.writer',
+      'application/x-starwriter',
+      // MS Word
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      // Misc
+      'application/x-abiword',
+    ],
+  },
   queryFields: [
     '"hash"^5',
     '"metadata.isbn"^5',
-    'metadata.title^5',
-    'metadata.name^5',
-    'references.name^5',
+    'metadata.title^10',
+    'metadata.name^10',
+    'references.name^6',
     'metadata.author^4',
     'metadata.xmpDM:artist^4',
     '"references.parent_hash"^3',
