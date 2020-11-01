@@ -1,15 +1,25 @@
 {
   "name": "ipfs-search-client",
   "version": "0.1.0",
-  "description": "swagger client for ipfs-search-client",
-  "author": "Swagger Codegen Contributors",
+  "description": "Official TypeScript/JavaScript API client for ipfs-search.com, generated from the OpenAPI 3.0 definition.",
+  "author": "Mathijs de Bruin",
   "keywords": [
     "fetch",
     "typescript",
     "swagger-client",
-    "ipfs-search-client"
+    "ipfs-search-client",
+    "ipfs",
+    "search"
   ],
-  "license": "Unlicense",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/ipfs-search/ipfs-search-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipfs-search/ipfs-search-api.git"
+  },
+  "homepage": "https://github.com/ipfs-search/ipfs-search-api/client#readme",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
