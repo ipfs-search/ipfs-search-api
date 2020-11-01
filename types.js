@@ -19,7 +19,7 @@ module.exports = {
     return types[indexOfIndex];
   },
   indexesFromType: (type) => {
-    if (!type) {
+    if (!type || type === 'any') {
       return indexes;
     }
 
