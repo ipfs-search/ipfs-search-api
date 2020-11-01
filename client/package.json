@@ -1,0 +1,54 @@
+{
+  "name": "ipfs-search-client",
+  "version": "0.1.0",
+  "description": "Official TypeScript/JavaScript API client for ipfs-search.com, generated from the OpenAPI 3.0 definition.",
+  "author": "Mathijs de Bruin",
+  "keywords": [
+    "fetch",
+    "typescript",
+    "swagger-client",
+    "ipfs-search-client",
+    "ipfs",
+    "search"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/ipfs-search/ipfs-search-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipfs-search/ipfs-search-api.git"
+  },
+  "homepage": "https://github.com/ipfs-search/ipfs-search-api/client#readme",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --outDir dist/",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "portable-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.0",
+    "jest": "^25.4.0",
+    "ts-jest": "^25.4.0",
+    "typescript": "^3.8.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}

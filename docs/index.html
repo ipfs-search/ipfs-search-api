@@ -1,0 +1,436 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ipfs-search API</title>
+    <style type="text/css">
+      body {
+      	font-family: Trebuchet MS, sans-serif;
+      	font-size: 15px;
+      	color: #444;
+      	margin-right: 24px;
+      }
+      
+      h1	{
+      	font-size: 25px;
+      }
+      h2	{
+      	font-size: 20px;
+      }
+      h3	{
+      	font-size: 16px;
+      	font-weight: bold;
+      }
+      hr	{
+      	height: 1px;
+      	border: 0;
+      	color: #ddd;
+      	background-color: #ddd;
+      }
+      
+      .app-desc {
+        clear: both;
+        margin-left: 20px;
+      }
+      .param-name {
+        width: 100%;
+      }
+      .license-info {
+        margin-left: 20px;
+      }
+      
+      .license-url {
+        margin-left: 20px;
+      }
+      
+      .model {
+        margin: 0 0 0px 20px;
+      }
+      
+      .method {
+        margin-left: 20px;
+      }
+      
+      .method-notes	{
+      	margin: 10px 0 20px 0;
+      	font-size: 90%;
+      	color: #555;
+      }
+      
+      pre {
+        padding: 10px;
+        margin-bottom: 2px;
+      }
+      
+      .http-method {
+       text-transform: uppercase;
+      }
+      
+      pre.get {
+        background-color: #0f6ab4;
+      }
+      
+      pre.post {
+        background-color: #10a54a;
+      }
+      
+      pre.put {
+        background-color: #c5862b;
+      }
+      
+      pre.delete {
+        background-color: #a41e22;
+      }
+      
+      .huge	{
+      	color: #fff;
+      }
+      
+      pre.example {
+        background-color: #f3f3f3;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      
+      code {
+        white-space: pre;
+      }
+      
+      .nickname {
+        font-weight: bold;
+      }
+      
+      .method-path {
+        font-size: 1.5em;
+        background-color: #0f6ab4;
+      }
+      
+      .up {
+        float:right;
+      }
+      
+      .parameter {
+        width: 500px;
+      }
+      
+      .param {
+        width: 500px;
+        padding: 10px 0 0 20px;
+        font-weight: bold;
+      }
+      
+      .param-desc {
+        width: 700px;
+        padding: 0 0 0 20px;
+        color: #777;
+      }
+      
+      .param-type {
+        font-style: italic;
+      }
+      
+      .param-enum-header {
+      width: 700px;
+      padding: 0 0 0 60px;
+      color: #777;
+      font-weight: bold;
+      }
+      
+      .param-enum {
+      width: 700px;
+      padding: 0 0 0 80px;
+      color: #777;
+      font-style: italic;
+      }
+      
+      .field-label {
+        padding: 0;
+        margin: 0;
+        clear: both;
+      }
+      
+      .field-items	{
+      	padding: 0 0 15px 0;
+      	margin-bottom: 15px;
+      }
+      
+      .return-type {
+        clear: both;
+        padding-bottom: 10px;
+      }
+      
+      .param-header {
+        font-weight: bold;
+      }
+      
+      .method-tags {
+        text-align: right;
+      }
+      
+      .method-tag {
+        background: none repeat scroll 0% 0% #24A600;
+        border-radius: 3px;
+        padding: 2px 10px;
+        margin: 2px;
+        color: #FFF;
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>ipfs-search API</h1>
+    <div class="app-desc">Search files and directories on the <a href="https://ipfs.io/">Interplanetary Filesystem</a> through the <a href="https://ipfs-search.com">ipfs-search.com</a> search API.</div>
+    <div class="app-desc">More information: <a href="https://ipfs-search.com">https://ipfs-search.com</a></div>
+    <div class="app-desc">Contact Info: <a href="info@ipfs-search.com">info@ipfs-search.com</a></div>
+    <div class="app-desc">Version: 1.0.2</div>
+    <div class="app-desc">BasePath:/v1</div>
+    <div class="license-info">AGPL 3.0</div>
+    <div class="license-url">https://www.gnu.org/licenses/agpl-3.0.nl.html</div>
+  <h2>Access</h2>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Default">Default</a></h4>
+  <ul>
+  <li><a href="#metadatahashGet"><code><span class="http-method">get</span> /metadata/${hash}/</code></a></li>
+  <li><a href="#searchGet"><code><span class="http-method">get</span> /search</code></a></li>
+  </ul>
+
+  <h1><a name="Default">Default</a></h1>
+  <div class="method"><a name="metadatahashGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /metadata/${hash}/</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">metadatahashGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">hash (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Content ID; IPLD &lt;a href&#x3D;&quot;https://specs.ipld.io/block-layer/CID.html&quot;&gt;CID&lt;/a&gt;. </div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Metadata">Metadata</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "metadata" : {
+    "xmpDM:genre" : [ "Soundtrack" ],
+    "xmpDM:composer" : [ "Nobuo Uematsu" ],
+    "X-Parsed-By" : [ "org.apache.tika.parser.DefaultParser", "org.apache.tika.parser.mp3.Mp3Parser" ],
+    "creator" : [ "" ],
+    "xmpDM:album" : [ "\"Final Fantasy IX\" Original Soundtrack, Disk 4" ],
+    "xmpDM:trackNumber" : [ "24" ],
+    "xmpDM:releaseDate" : [ "2000" ],
+    "meta:author" : [ "" ],
+    "xmpDM:artist" : [ "" ],
+    "dc:creator" : [ "" ],
+    "xmpDM:audioCompressor" : [ "MP3" ],
+    "resourceName" : [ "24-Coca Cola TV CM 1.mp3" ],
+    "title" : [ "Coca Cola TV CM 1" ],
+    "xmpDM:audioChannelType" : [ "Stereo" ],
+    "version" : [ "MPEG 3 Layer III Version 1" ],
+    "xmpDM:logComment" : [ "eng - \nhttp://www.ffdream.com" ],
+    "xmpDM:audioSampleRate" : [ "44100" ],
+    "channels" : [ "2" ],
+    "dc:title" : [ "Coca Cola TV CM 1" ],
+    "Author" : [ "" ],
+    "xmpDM:duration" : [ "20218.76953125" ],
+    "Content-Type" : [ "audio/mpeg" ],
+    "samplerate" : "-\"44100\""
+  },
+  "type" : "file",
+  "version" : 2
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#Metadata">Metadata</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="searchGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /search</code></pre></div>
+    <div class="method-summary">Search for files and directories. (<span class="nickname">searchGet</span>)</div>
+    <div class="method-notes">By default, the score for items with a more recent &lt;code&gt;last-seen&lt;/code&gt; date are positively boosted while &#x27;unnamed&#x27; items (without a &lt;code&gt;reference&lt;/code&gt; or a &lt;code&gt;title&lt;/code&gt;) are negatively boosted.</div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">q (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Search string query, based on Elasticsearch&#x27;s &lt;a href&#x3D;&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-dsl-query-string-query&quot;&gt;Query string query&lt;/a&gt; syntax. </div>      <div class="param">type (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Resource type. Omit to return all types. </div>      <div class="param">page (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Page number. default: 0 </div>    </div>  <!-- field-items -->
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#SearchResultList">SearchResultList</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "hits" : [ {
+    "first-seen" : "2018-08-18T20:49:17Z",
+    "score" : 231.37302,
+    "size" : 5605,
+    "references" : [ {
+      "name" : "marine-combat-water-survival.html"
+    }, {
+      "name" : "marine-combat-water-survival.html"
+    } ],
+    "description" : "This publication also teaches Marines to cross <em>water</em> obstacles and perform <em>water</em> rescues correctly and safely.",
+    "mimetype" : "text/html",
+    "title" : "Marine Combat <em>Water</em> Survival by Anonymous",
+    "type" : "file",
+    "last-seen" : "2020-10-27T12:55:32Z",
+    "hash" : "QmcDCte64xtxqTVzdWnT5MG9yi3dFsNuLZjAyess4RJFWc"
+  }, {
+    "first-seen" : "2018-08-18T20:49:17Z",
+    "score" : 231.37302,
+    "size" : 5605,
+    "references" : [ {
+      "name" : "marine-combat-water-survival.html"
+    }, {
+      "name" : "marine-combat-water-survival.html"
+    } ],
+    "description" : "This publication also teaches Marines to cross <em>water</em> obstacles and perform <em>water</em> rescues correctly and safely.",
+    "mimetype" : "text/html",
+    "title" : "Marine Combat <em>Water</em> Survival by Anonymous",
+    "type" : "file",
+    "last-seen" : "2020-10-27T12:55:32Z",
+    "hash" : "QmcDCte64xtxqTVzdWnT5MG9yi3dFsNuLZjAyess4RJFWc"
+  } ],
+  "total" : 10000,
+  "max_score" : 255.88916
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#SearchResultList">SearchResultList</a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#Hash"><code>Hash</code></a></li>
+    <li><a href="#Metadata"><code>Metadata</code></a></li>
+    <li><a href="#Reference"><code>Reference</code></a></li>
+    <li><a href="#SearchResult"><code>SearchResult</code></a></li>
+    <li><a href="#SearchResultList"><code>SearchResultList</code></a></li>
+    <li><a href="#Type"><code>Type</code></a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="Hash"><code>Hash</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+          </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Metadata"><code>Metadata</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">metadata (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: {&quot;xmpDM:genre&quot;:[&quot;Soundtrack&quot;],&quot;xmpDM:composer&quot;:[&quot;Nobuo Uematsu&quot;],&quot;X-Parsed-By&quot;:[&quot;org.apache.tika.parser.DefaultParser&quot;,&quot;org.apache.tika.parser.mp3.Mp3Parser&quot;],&quot;creator&quot;:[&quot;&quot;],&quot;xmpDM:album&quot;:[&quot;\&quot;Final Fantasy IX\&quot; Original Soundtrack, Disk 4&quot;],&quot;xmpDM:trackNumber&quot;:[&quot;24&quot;],&quot;xmpDM:releaseDate&quot;:[&quot;2000&quot;],&quot;meta:author&quot;:[&quot;&quot;],&quot;xmpDM:artist&quot;:[&quot;&quot;],&quot;dc:creator&quot;:[&quot;&quot;],&quot;xmpDM:audioCompressor&quot;:[&quot;MP3&quot;],&quot;resourceName&quot;:[&quot;24-Coca Cola TV CM 1.mp3&quot;],&quot;title&quot;:[&quot;Coca Cola TV CM 1&quot;],&quot;xmpDM:audioChannelType&quot;:[&quot;Stereo&quot;],&quot;version&quot;:[&quot;MPEG 3 Layer III Version 1&quot;],&quot;xmpDM:logComment&quot;:[&quot;eng - \nhttp://www.ffdream.com&quot;],&quot;xmpDM:audioSampleRate&quot;:[&quot;44100&quot;],&quot;channels&quot;:[&quot;2&quot;],&quot;dc:title&quot;:[&quot;Coca Cola TV CM 1&quot;],&quot;Author&quot;:[&quot;&quot;],&quot;xmpDM:duration&quot;:[&quot;20218.76953125&quot;],&quot;Content-Type&quot;:[&quot;audio/mpeg&quot;],&quot;samplerate&quot;:&quot;-\&quot;44100\&quot;&quot;}</span></div>
+<div class="param">version (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 2</span></div>
+<div class="param">type (optional)</div><div class="param-desc"><span class="param-type"><a href="#Type">Type</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Reference"><code>Reference</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">parent_hash (optional)</div><div class="param-desc"><span class="param-type"><a href="#Hash">Hash</a></span>  </div>
+<div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: marine-combat-water-survival.html</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="SearchResult"><code>SearchResult</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">hash (optional)</div><div class="param-desc"><span class="param-type"><a href="#Hash">Hash</a></span>  </div>
+<div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Marine Combat &lt;em&gt;Water&lt;/em&gt; Survival by Anonymous</span></div>
+<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: This publication also teaches Marines to cross &lt;em&gt;water&lt;/em&gt; obstacles and perform &lt;em&gt;water&lt;/em&gt; rescues correctly and safely.</span></div>
+<div class="param">type (optional)</div><div class="param-desc"><span class="param-type"><a href="#Type">Type</a></span>  </div>
+<div class="param">size (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 5605</span></div>
+<div class="param">first-seen (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 2018-08-18T20:49:17Z</span></div>
+<div class="param">last-seen (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 2020-10-27T12:55:32Z</span></div>
+<div class="param">score (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 231.37302</span></div>
+<div class="param">references (optional)</div><div class="param-desc"><span class="param-type"><a href="#Reference">array[Reference]</a></span>  </div>
+<div class="param">mimetype (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: text/html</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="SearchResultList"><code>SearchResultList</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">total (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 10000</span></div>
+<div class="param">max_score (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 255.88916</span></div>
+<div class="param">hits (optional)</div><div class="param-desc"><span class="param-type"><a href="#SearchResult">array[SearchResult]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Type"><code>Type</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+          </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>
