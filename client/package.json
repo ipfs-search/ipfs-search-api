@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/ipfs-search/ipfs-search-api.git"
   },
-  "homepage": "https://github.com/ipfs-search/ipfs-search-api/client#readme",
+  "homepage": "https://github.com/ipfs-search/ipfs-search-api/tree/master/client#readme",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
