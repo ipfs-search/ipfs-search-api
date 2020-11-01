@@ -1,0 +1,207 @@
+openapi: 3.0.0
+info:
+  description: Search files and directories on the [Interplanetary Filesystem](https://ipfs.io/) through the [ipfs-search.com](https://ipfs-search.com) search API.
+  version: 1.0.2
+  title: ipfs-search API
+  contact:
+    name: ipfs-search.com
+    email: info@ipfs-search.com
+    url: https://ipfs-search.com
+  license:
+    name: AGPL 3.0
+    url: 'https://www.gnu.org/licenses/agpl-3.0.nl.html'
+
+servers:
+  - url: 'https://api.ipfs-search.com/v1'
+
+paths:
+  /search:
+    get:
+      summary: Search for files and directories.
+      description:
+        # Scoring
+        By default, the score for items with a more recent `last-seen` date are positively boosted while 'unnamed' items (without a `reference` or a `title`) are negatively boosted.
+      parameters:
+        - in: query
+          name: q
+          required: true
+          description: Search string query, based on Elasticsearch's [Query string query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-dsl-query-string-query) syntax.
+          schema:
+            type: string
+          examples:
+            simple_example:
+              summary: Simple text search.
+              value: water
+            wildcard_name:
+              summary: Wildcard search by reference (file)name.
+              value: references.name:*.html
+            last_seen:
+              summary: Last seen this month.
+              value: last-seen:>now-1M
+            content_type:
+              summary: Exact match on content-type.
+              value: metadata.Content-Type:"application/pdf"
+            parent_hash:
+              summary: Inside a directory.
+              value: references.parent_hash:QmVFHYaqPHJ7vg2DcszELhyQ7pJXLjHgx33FBwgbiWRQKi
+        - in: query
+          name: type
+          required: false
+          description: Resource type. Omit to return all types.
+          schema:
+            $ref: '#/components/schemas/Type'
+        - in: query
+          name: page
+          required: false
+          description: Page number.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+            example: 1
+    
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResultList'
+  /metadata/${hash}/:
+    get:
+      parameters:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Hash'
+          description: Content ID; IPLD [CID](https://specs.ipld.io/block-layer/CID.html).
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metadata'
+
+components:
+  schemas:
+    SearchResult:
+      type: object
+      properties:
+        hash:
+          $ref: '#/components/schemas/Hash'
+        title:
+          type: string
+          example: Marine Combat <em>Water</em> Survival by Anonymous
+        description:
+          type: string
+          example: This publication also teaches Marines to cross <em>water</em> obstacles and perform <em>water</em> rescues correctly and safely.
+        type:
+          $ref: '#/components/schemas/Type'
+        size:
+          type: integer
+          example: 5605
+        first-seen:
+          type: string
+          example: "2018-08-18T20:49:17Z"
+        last-seen:
+          type: string
+          example: "2020-10-27T12:55:32Z"
+        score:
+          type: number
+          example: 231.37302
+        references:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Reference'
+        mimetype:
+          type: string
+          example: text/html
+    Reference:
+      type: object
+      properties:
+        parent_hash:
+          $ref: '#/components/schemas/Hash'
+        name:
+          type: string
+          example: marine-combat-water-survival.html
+    SearchResultList:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 10000
+        max_score:
+          type: number
+          example: 255.88916
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+    Metadata:
+      type: object
+      properties:
+        metadata:
+          type: object
+          example:
+            "xmpDM:genre":
+              - "Soundtrack"
+            "xmpDM:composer":
+              - "Nobuo Uematsu"
+            "X-Parsed-By":
+              - "org.apache.tika.parser.DefaultParser"
+              - "org.apache.tika.parser.mp3.Mp3Parser"
+            "creator":
+              -  ""
+            "xmpDM:album":
+              -  "\"Final Fantasy IX\" Original Soundtrack, Disk 4"
+            "xmpDM:trackNumber":
+              -  "24"
+            "xmpDM:releaseDate":
+              -  "2000"
+            "meta:author":
+              -  ""
+            "xmpDM:artist":
+              -  ""
+            "dc:creator":
+              -  ""
+            "xmpDM:audioCompressor":
+              -  "MP3"
+            "resourceName":
+              -  "24-Coca Cola TV CM 1.mp3"
+            "title":
+              -  "Coca Cola TV CM 1"
+            "xmpDM:audioChannelType":
+              -  "Stereo"
+            "version":
+              -  "MPEG 3 Layer III Version 1"
+            "xmpDM:logComment":
+              -  "eng - \nhttp://www.ffdream.com"
+            "xmpDM:audioSampleRate":
+              -  "44100"
+            "channels":
+              - "2"
+            "dc:title":
+              -  "Coca Cola TV CM 1"
+            "Author":
+              -  ""
+            "xmpDM:duration":
+              -  "20218.76953125"
+            "Content-Type":
+              -  "audio/mpeg"
+            "samplerate":
+              -"44100"
+        version:
+          type: integer
+          example: 2
+        type:
+          $ref: '#/components/schemas/Type'
+    Hash:
+      type: string
+      example: QmcDCte64xtxqTVzdWnT5MG9yi3dFsNuLZjAyess4RJFWc
+    Type:
+      type: string
+      example: file
+      enum: [any, file, directory]
+      default: any
