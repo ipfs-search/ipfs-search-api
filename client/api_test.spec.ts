@@ -22,14 +22,14 @@ describe("DefaultApi", () => {
   });
 
   test("metadatahashGet", () => {
-    const hash: Hash = undefined
-    return expect(instance.metadatahashGet(hash, {})).resolves.toBe(null)
+    const hash: api.Hash = "QmcDCte64xtxqTVzdWnT5MG9yi3dFsNuLZjAyess4RJFWc"
+    return expect(instance.metadatahashGet(hash, {})).resolves.toBeTruthy()
   })
   test("searchGet", () => {
     const q: string = "q_example"
-    const type: Type = undefined
+    const type: api.Type = undefined
     const page: number = 56
-    return expect(instance.searchGet(q, type, page, {})).resolves.toBe(null)
+    return expect(instance.searchGet(q, type, page, {})).resolves.toBeTruthy()
   })
 })
 

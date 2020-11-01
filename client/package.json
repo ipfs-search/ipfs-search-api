@@ -12,7 +12,7 @@
   "license": "Unlicense",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
-  "scripts" : {
+  "scripts": {
     "build": "tsc --outDir dist/",
     "test": "jest",
     "prepublishOnly": "npm run build"
@@ -32,5 +32,13 @@
       "^.+\\.tsx?$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
-  }}
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
