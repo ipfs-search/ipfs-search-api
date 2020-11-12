@@ -14,7 +14,8 @@ Statically generated documentation for the API can be found in the [docs](./docs
 ## JavaScript/TypeScript client
 There's a JavaScript/TypeScript client provided in the [client](./client/) folder and through [npm](https://www.npmjs.com/package/ipfs-search-client).
 
-## Running
+## Server
+Open the [server](./server/) folder and run:
 ```shell
 npm install
 npm start

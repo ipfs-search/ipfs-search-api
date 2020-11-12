@@ -3,10 +3,7 @@ const { Client } = require('@elastic/elasticsearch');
 const types = require('./types');
 const query = require('./query');
 
-const client = new Client({
-  node: 'http://localhost:9200',
-  log: 'info',
-});
+const client = require('./esclient');
 
 const typeRe = /_type:(\w+)/;
 
