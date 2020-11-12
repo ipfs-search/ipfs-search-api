@@ -20,3 +20,5 @@ Open the [server](./server/) folder and run:
 npm install
 npm start
 ```
+
+This will start an API server listening on port 9615, expecting Elasticsearh to be available on port 9200 on the localhost.
