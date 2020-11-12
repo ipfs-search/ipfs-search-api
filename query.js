@@ -122,16 +122,16 @@ const q = {
           filter: {
             bool: {
               must_not: [
-              { exists: { field: 'last-seen' } },
+                { exists: { field: 'last-seen' } },
               ],
               must: [
-              {
-                range: {
-                  'first-seen': {
-                    from: 'now-3M',
+                {
+                  range: {
+                    'first-seen': {
+                      from: 'now-3M',
+                    },
                   },
                 },
-              },
               ],
             },
           },
@@ -141,16 +141,16 @@ const q = {
           filter: {
             bool: {
               must_not: [
-              { exists: { field: 'last-seen' } },
+                { exists: { field: 'last-seen' } },
               ],
               must: [
-              {
-                range: {
-                  'first-seen': {
-                    from: 'now-1M',
+                {
+                  range: {
+                    'first-seen': {
+                      from: 'now-1M',
+                    },
                   },
                 },
-              },
               ],
             },
           },
@@ -160,16 +160,16 @@ const q = {
           filter: {
             bool: {
               must_not: [
-              { exists: { field: 'last-seen' } },
+                { exists: { field: 'last-seen' } },
               ],
               must: [
-              {
-                range: {
-                  'first-seen': {
-                    from: 'now-1d',
+                {
+                  range: {
+                    'first-seen': {
+                      from: 'now-1d',
+                    },
                   },
                 },
-              },
               ],
             },
           },
