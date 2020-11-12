@@ -1,7 +1,6 @@
 const express = require('express');
 const transform = require('./transform_results');
 const search = require('./search');
-const searchDocuments = require('./search_documents');
 
 const app = express();
 const port = 9615;
@@ -38,42 +37,6 @@ app.get('/search', (req, res, next) => {
   }
 
   search(req.query.q, req.query.type, page, pageSize).then((r) => {
-    const { hits } = r.body;
-
-    console.debug(`${req.url} 200: Returning ${hits.hits.length} results`);
-
-    hits.page_size = pageSize;
-    hits.page_count = Math.ceil(hits.total.value / pageSize);
-
-    // Backwards compatibility
-    hits.total = hits.total.value;
-
-    transform(hits);
-
-    res.json(hits).end();
-  }).catch(next);
-});
-
-app.get('/search/books', (req, res, next) => {
-  const maxPage = 100;
-  const pageSize = 15;
-
-  if (!('q' in req.query)) {
-    error(res, 422, 'query argument missing');
-  }
-
-  let page = 0;
-
-  if ('page' in req.query) {
-    page = parseInt(req.query.page, 10);
-
-    // For performance reasons, don't allow paging too far down
-    if (page > maxPage) {
-      error(res, 422, 'paging not allowed beyond 100');
-    }
-  }
-
-  searchDocuments(req.query.q, page, pageSize).then((r) => {
     const { hits } = r.body;
 
     console.debug(`${req.url} 200: Returning ${hits.hits.length} results`);
