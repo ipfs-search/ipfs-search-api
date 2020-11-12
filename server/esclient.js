@@ -1,7 +1,6 @@
-const elasticsearch = require('elasticsearch');
+const { Client } = require('@elastic/elasticsearch');
 
-module.exports = new elasticsearch.Client({
-    host: 'localhost:9200',
-    log: 'info',
-    apiVersion: '5.6'
+module.exports = new Client({
+  node: 'http://localhost:9200',
+  log: 'info',
 });

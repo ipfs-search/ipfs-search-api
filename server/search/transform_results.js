@@ -1,8 +1,8 @@
 /* jshint node: true, esnext: true */
 
+const types = require('../types');
 const htmlEncode = require('js-htmlencode');
 const downsize = require('downsize');
-const types = require('./types');
 
 const resultDescriptionLength = 250;
 const maxReferences = 5;

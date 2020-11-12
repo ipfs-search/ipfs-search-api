@@ -1,9 +1,6 @@
-const { Client } = require('@elastic/elasticsearch');
-
-const types = require('./types');
+const client = require('../esclient');
+const types = require('../types');
 const query = require('./query');
-
-const client = require('./esclient');
 
 const typeRe = /_type:(\w+)/;
 

@@ -1,6 +1,8 @@
 const express = require('express');
-const transform = require('./transform_results');
-const search = require('./search');
+const transformSearch = require('./search/transform_results');
+const search = require('./search/search');
+const getMetadata = require('./metadata/get_metadata');
+const cidValidator = require('./metadata/cid_validator');
 
 const app = express();
 const port = 9615;
@@ -22,7 +24,7 @@ app.get('/search', (req, res, next) => {
   const pageSize = 15;
 
   if (!('q' in req.query)) {
-    error(res, 422, 'query argument missing');
+    error(res, 400, 'query argument missing');
   }
 
   let page = 0;
@@ -32,7 +34,7 @@ app.get('/search', (req, res, next) => {
 
     // For performance reasons, don't allow paging too far down
     if (page > maxPage) {
-      error(res, 422, 'paging not allowed beyond 100');
+      error(res, 400, 'paging not allowed beyond 100');
     }
   }
 
@@ -47,13 +49,27 @@ app.get('/search', (req, res, next) => {
     // Backwards compatibility
     hits.total = hits.total.value;
 
-    transform(hits);
+    transformSearch(hits);
 
     res.json(hits).end();
   }).catch(next);
 });
 
-app.use((err, req, res, next) => {
+app.get('/metadata/:cid/', function (req, res, next) {
+    if (!req.params['cid']) invalid_requst(res)
+
+    let cid = req.params['cid']
+
+    if (!cidValidator.Validate(cid)) {
+      error(res, 400, 'invalid cid');
+    }
+
+    getMetadata(cid).then((r) => {
+      res.json(r).end();
+    }).catch(next);
+})
+
+app.use(function (err, req, res, next) {
   if (process.env.NODE_ENV === 'production') {
     // Don't leak details in production
     error(res, 500, 'Internal Server Error');
