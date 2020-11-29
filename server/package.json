@@ -5,6 +5,10 @@
   "main": "server.js",
   "author": "Mathijs de Bruin <mathijs@mathijsfietst.nl> (http://mathijsfietst.nl/)",
   "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipfs-search/ipfs-search-api.git"
+  },
   "dependencies": {
     "@elastic/elasticsearch": "^7.8.0",
     "downsize": "0.0.8",
