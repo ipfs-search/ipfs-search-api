@@ -100,6 +100,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/Metadata'
 
+  /thumbnail/${hash}/{width}x{height}:
+    get:
+      summary: Generate/retrieve thumbnails for resources on IPFS (whenever possible).
+      description: Based on [https://www.thumbnailapi.com/documentation/](https://www.thumbnailapi.com/documentation/). Images generated server-side and served through IPFS by providing a redirect.
+      parameters:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Hash'
+          description: Content ID; IPLD [CID](https://specs.ipld.io/block-layer/CID.html).
+        - name: width
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 64
+            maximum: 1920
+        - name: height
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 48
+            maximum: 1080
+      responses:
+        '308':
+          description: Permanent redirect to thumbnail of the exact requested dimensions, in WebP format, served through IPFS.
+
 components:
   schemas:
     SearchResult:
