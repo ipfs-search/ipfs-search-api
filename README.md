@@ -9,7 +9,7 @@ Microservice for searching the ipfs-search.com Elasticsearch index.
 [![swagger-api validator-badge](https://validator.swagger.io/validator?url=https://raw.githubusercontent.com/ipfs-search/ipfs-search-api/master/openapi.yaml)](./openapi.yaml)
 
 ## Documentation
-Statically generated documentation for the API can be found in the [docs](./docs/) folder and beautifully rendered interactive documentation is hosted at [Swagger](https://app.swaggerhub.com/apis/ipfs-search/ipfs-search/1.0.2).
+Statically generated documentation for the API can be found in the [docs](./docs/) folder and beautifully rendered interactive documentation is hosted at [Swagger](https://app.swaggerhub.com/apis/ipfs-search/ipfs-search).
 
 ## JavaScript/TypeScript client
 There's a JavaScript/TypeScript client provided in the [client](./client/) folder and through [npm](https://www.npmjs.com/package/ipfs-search-client).
