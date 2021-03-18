@@ -48,7 +48,7 @@ paths:
         - in: query
           name: type
           required: false
-          description: Resource type. Omit to return all types.
+          description: Resource type. Omit to return results of any type.
           schema:
             $ref: '#/components/schemas/Type'
         - name: offset
@@ -220,5 +220,6 @@ components:
     Type:
       type: string
       example: file
-      enum: [any, file, directory]
+      enum: [any, audio, video, document, directory, other]
       default: any
+      description: Type of returned items. Audio, video and directories should be self-explanatory. Documents are files which can be natively opened on most systems, which typically have a textual representation, such as PDF/DJVU, eBook, Office, HTML or text-files. Other are any files which do not fall in any of the prior categories, such as binary software packages, container images, research datasets etc.
