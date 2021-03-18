@@ -84,6 +84,7 @@ paths:
                 $ref: '#/components/schemas/SearchResultList'
   /metadata/${hash}/:
     get:
+      summary: Retrieve metadata for resources on IPFS.
       parameters:
         - name: hash
           in: path
@@ -131,6 +132,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Reference'
+          description: Zero or more named references.
         mimetype:
           type: string
           example: text/html
@@ -141,7 +143,9 @@ components:
           $ref: '#/components/schemas/Hash'
         name:
           type: string
+          description: Filename of a resource, as referred to from `parent_hash`.
           example: marine-combat-water-survival.html
+      description: Any resource can have zero or more references, such that a link to it can be created as [`/ipfs/<parent_hash>/<name>`. This can be used to generate more semantic links as well as to give a hint for the resolution of mimetypes. For example [`/ipfs/QmcDCte64xtxqTVzdWnT5MG9yi3dFsNuLZjAyess4RJFWc/marine-combat-water-survival.html`](https://gateway.ipfs.io/ipfs/QmcDCte64xtxqTVzdWnT5MG9yi3dFsNuLZjAyess4RJFWc/marine-combat-water-survival.html)).
     SearchResultList:
       type: object
       properties:
@@ -217,6 +221,7 @@ components:
     Hash:
       type: string
       example: QmcDCte64xtxqTVzdWnT5MG9yi3dFsNuLZjAyess4RJFWc
+      description: Content ID; IPLD [CID](https://specs.ipld.io/block-layer/CID.html), a globally unique reference to a resource determined by its contents.
     Type:
       type: string
       example: file
