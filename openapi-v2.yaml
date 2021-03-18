@@ -17,15 +17,16 @@ servers:
 paths:
   /search:
     get:
-      summary: Search for files and directories.
+      summary: Search for files and directories on IPFS.
       description:
-        # Scoring
-        By default, the score for items with a more recent `last-seen` date are positively boosted while 'unnamed' items (without a `reference` or a `title`) are negatively boosted.
+        Perform search queries on the [ipfs-search.com](ipfs-search.com) index.
       parameters:
         - in: query
           name: q
           required: true
           description: Search string query, based on Elasticsearch's [Query string query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-dsl-query-string-query) syntax.
+
+            Allows filtering on indexed fields, as listed in the [index mapping](https://github.com/ipfs-search/ipfs-search/tree/master/docs/indices).
           schema:
             type: string
           examples:
@@ -111,6 +112,7 @@ components:
         score:
           type: number
           example: 231.37302
+          description: Relevance of the result. The score for items with a more recent `last-seen` date are positively boosted while 'unnamed' items (without a `reference` or a `title`) are negatively boosted.
         references:
           type: array
           items:
@@ -139,6 +141,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SearchResult'
+          description: Search results, sorted in descending order by scoring.
     Metadata:
       type: object
       properties:
