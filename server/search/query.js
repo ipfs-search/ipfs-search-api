@@ -27,41 +27,30 @@ const q = {
     ],
   },
   queryFields: [
-    '_id^5',
-    'metadata.isbn^5',
-    'metadata.title^10',
-    'metadata.name^10',
-    'references.name^6',
-    'metadata.author^4',
-    'metadata.xmpDM:artist^4',
-    'references.parent_hash^3',
-    'metadata.xmpDM:composer^3',
-    'metadata.description^3',
-    'metadata.keywords^3',
-    'links.Name^3',
-    'metadata.xmpDM:album^2',
-    'metadata.xmpDM:albumArtist^2',
-    'metadata.publisher^2',
-    'metadata.producer^2',
-    'links.Hash^2',
-    'metadata.Content-Type^2',
-    'content',
-    'fingerprint',
-    // 'metadata.Author', // TO INDEX!!!
-    // 'metadata.Keywords'
-    // 'metadata.creator',
-    // 'metadata.contributor'
-    // 'metadata.subject',
-    'urls',
+    "_id^10",
+    "metadata.identifier^10",
+    "metadata.title^10",
+    "references.name^8",
+    "metadata.subject^5",
+    "metadata.xmpDM:album^5",
+    "metadata.dc:creator^4",
+    "metadata.xmpDM:compilation^4",
+    "metadata.description^3",
+    "references.parent_hash^3",
+    "links.Name^3",
+    "links.Hash^2",
+    "metadata.Content-Type^2",
+    "metadata.X-Parsed-By",
+    "content",
+    "urls"
   ],
+  // TODO: Return more fields from the goodies we have.
   sourceFields: [
     'metadata.title',
-    'metadata.name',
-    'metadata.Author',
+    'metadata.dc:creator',
     'metadata.description',
     'metadata.Content-Type',
-    'metadata.Creation-Date',
-    'metadata.publisher',
+    'metadata.dcterms:created',
     'references',
     'size',
     'last-seen',
@@ -91,7 +80,7 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-3M',
+                from: 'now-1M',
               },
             },
           },
@@ -101,7 +90,7 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-1M',
+                from: 'now-1w',
               },
             },
           },
@@ -116,67 +105,9 @@ const q = {
             },
           },
           weight: 1,
-        },
-        // Also boost first-seen if they don't have last-seen defined
-        {
-          filter: {
-            bool: {
-              must_not: [
-                { exists: { field: 'last-seen' } },
-              ],
-              must: [
-                {
-                  range: {
-                    'first-seen': {
-                      from: 'now-3M',
-                    },
-                  },
-                },
-              ],
-            },
-          },
-          weight: 1,
-        },
-        {
-          filter: {
-            bool: {
-              must_not: [
-                { exists: { field: 'last-seen' } },
-              ],
-              must: [
-                {
-                  range: {
-                    'first-seen': {
-                      from: 'now-1M',
-                    },
-                  },
-                },
-              ],
-            },
-          },
-          weight: 1,
-        },
-        {
-          filter: {
-            bool: {
-              must_not: [
-                { exists: { field: 'last-seen' } },
-              ],
-              must: [
-                {
-                  range: {
-                    'first-seen': {
-                      from: 'now-1d',
-                    },
-                  },
-                },
-              ],
-            },
-          },
-          weight: 1,
-        },
-      ],
-    },
+        }
+      ]
+    }
   }),
   // Bias against unnamed items
   boostUnnamed: (query) => ({
@@ -186,7 +117,6 @@ const q = {
         bool: {
           filter: [
             { exists: { field: 'metadata.title' } },
-            { exists: { field: 'metadata.name' } },
             { exists: { field: 'references.Name' } },
           ],
         },

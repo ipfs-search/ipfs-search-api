@@ -109,19 +109,11 @@ function getMimetype(result) {
 }
 
 function getAuthor(src) {
-  return src.metadata && ((
-    src.metadata.Author && src.metadata.Author[0]
-  ) || (
-    src.metadata.author && src.metadata.author[0]
-  ));
-}
-
-function getPublisher(src) {
-  return src.metadata && src.metadata.publisher && src.metadata.publisher[0];
+  return src.metadata && src.metadata['dc:creator'] && src.metadata['dc:creator'][0];
 }
 
 function getCreationDate(src) {
-  return src.metadata && src.metadata['Creation-Date'] && src.metadata['Creation-Date'][0];
+  return src.metadata && src.metadata['dcterms:created'] && src.metadata['dcterms:created'][0];
 }
 
 function transformResults(results) {
@@ -132,7 +124,6 @@ function transformResults(results) {
       hash: item._id,
       title: getTitle(item),
       author: getAuthor(item._source),
-      publisher: getPublisher(item._source),
       creation_date: getCreationDate(item._source),
       description: getDescription(item),
       type: types.typeFromIndex(item._index),

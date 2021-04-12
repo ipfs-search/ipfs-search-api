@@ -46,6 +46,8 @@ function search(q, type, page, pageSize) {
     _source: query.sourceFields,
   };
 
+  console.log(JSON.stringify(body, null, 4));
+
   return client.search({
     index: types.indexesFromType(type || qType),
     body,
