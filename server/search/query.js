@@ -29,11 +29,11 @@ const q = {
   queryFields: [
     "_id^10",
     "metadata.identifier^10",
-    "metadata.title^10",
+    "metadata.title^8",
+    "metadata.dc:creator^8",
     "references.name^8",
     "metadata.subject^5",
     "metadata.xmpDM:album^5",
-    "metadata.dc:creator^4",
     "metadata.xmpDM:compilation^4",
     "metadata.description^3",
     "references.parent_hash^3",
