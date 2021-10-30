@@ -40,7 +40,6 @@ const q = {
     "links.Name^3",
     "links.Hash^2",
     "metadata.Content-Type^2",
-    "metadata.X-Parsed-By",
     "content",
     "urls"
   ],
