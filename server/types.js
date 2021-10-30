@@ -1,6 +1,6 @@
 const indexes = [
-  'ipfs_directories_v8',
-  'ipfs_files_v8',
+  'ipfs_directories',
+  'ipfs_files',
 ];
 
 const types = [
@@ -10,7 +10,7 @@ const types = [
 
 module.exports = {
   typeFromIndex: (index) => {
-    const indexOfIndex = indexes.indexOf(index);
+    const indexOfIndex = indexes.findIndex((i) => index.includes(i));
 
     if (indexOfIndex === -1) {
       throw new Error(`Unknown index: ${index}`);
