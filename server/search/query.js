@@ -80,7 +80,7 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-1M',
+                from: 'now-1M/m',
               },
             },
           },
@@ -90,7 +90,7 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-1w',
+                from: 'now-1w/m',
               },
             },
           },
@@ -100,7 +100,7 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-1d',
+                from: 'now-1d/m',
               },
             },
           },
