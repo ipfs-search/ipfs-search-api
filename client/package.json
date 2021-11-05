@@ -27,9 +27,6 @@
     "test": "jest",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {
-    "portable-fetch": "^3.0.0"
-  },
   "devDependencies": {
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.0",
@@ -50,5 +47,8 @@
       "json",
       "node"
     ]
+  },
+  "dependencies": {
+    "cross-fetch": "^3.1.4"
   }
 }
