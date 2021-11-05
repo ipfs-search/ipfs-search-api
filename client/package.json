@@ -1,6 +1,6 @@
 {
   "name": "ipfs-search-client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Official TypeScript/JavaScript API client for ipfs-search.com, generated from the OpenAPI 3.0 definition.",
   "author": "Mathijs de Bruin",
   "keywords": [
