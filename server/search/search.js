@@ -23,7 +23,7 @@ function typeFromQ(q) {
   };
 }
 
-function search(q, type, page, pageSize) {
+function search(q, type, page, pageSize, preference) {
   const { qType, qWithoutType } = typeFromQ(q);
 
   const body = {
@@ -52,6 +52,8 @@ function search(q, type, page, pageSize) {
     size: pageSize,
     from: page * pageSize,
     timeout: '15s',
+    // https://www.elastic.co/guide/en/elasticsearch/reference/current/search-shard-routing.html#shard-and-node-preference
+    preference: preference,
   });
 }
 

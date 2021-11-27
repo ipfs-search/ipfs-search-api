@@ -19,6 +19,9 @@ function error(res, code, err) {
   res.json({ error: `${err}` }).status(code).end();
 }
 
+// https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', true);
+
 app.get('/search', (req, res, next) => {
   const maxPage = 100;
   const pageSize = 15;
@@ -38,10 +41,10 @@ app.get('/search', (req, res, next) => {
     }
   }
 
-  search(req.query.q, req.query.type, page, pageSize).then((r) => {
+  search(req.query.q, req.query.type, page, pageSize, req.ip).then((r) => {
     const { hits } = r.body;
 
-    console.debug(`${req.url} 200: Returning ${hits.hits.length} results`);
+    console.debug(`${req.url} 200: Returning ${hits.hits.length} results for ${req.ip}`);
 
     hits.page_size = pageSize;
     hits.page_count = Math.ceil(hits.total.value / pageSize);
