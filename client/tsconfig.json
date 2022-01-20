@@ -5,7 +5,8 @@
     "module": "commonjs",
     "noImplicitAny": true,
     "outDir": "dist",
-    "rootDir": "."  },
+    "rootDir": "."
+  },
   "exclude": [
     "dist",
     "node_modules",
