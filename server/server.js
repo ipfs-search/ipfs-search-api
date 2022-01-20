@@ -16,7 +16,7 @@ function error(res, code, err) {
     console.trace(err.body.error);
   }
 
-  res.json({ error: `${err}` }).status(code).end();
+  res.status(code).json({ error: `${err}` }).end();
 }
 
 // https://expressjs.com/en/guide/behind-proxies.html
