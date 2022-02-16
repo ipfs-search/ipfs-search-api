@@ -8,6 +8,9 @@ Microservice for searching the ipfs-search.com Elasticsearch index.
 ## API Spec
 [![swagger-api validator-badge](https://validator.swagger.io/validator?url=https://raw.githubusercontent.com/ipfs-search/ipfs-search-api/master/openapi.yaml)](./openapi.yaml)
 
+## Requirements
+* Node 16.x (Gallium/LTS)
+
 ## Running
 Open the [server](./server/) folder and run:
 ```shell

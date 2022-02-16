@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS build
+FROM node:16-buster-slim AS build
 
 WORKDIR /usr/src/app
 COPY ./package* ./
