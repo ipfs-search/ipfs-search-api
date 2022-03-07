@@ -10,7 +10,7 @@
     "url": "git+https://github.com/ipfs-search/ipfs-search-api.git"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^7.8.0",
+    "@opensearch-project/opensearch": "^1.0.2",
     "downsize": "0.0.8",
     "express": "^4.17.1",
     "is-ipfs": "^2.0.0",

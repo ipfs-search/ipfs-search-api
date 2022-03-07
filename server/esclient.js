@@ -1,4 +1,4 @@
-const { Client } = require('@elastic/elasticsearch');
+const { Client } = require("@opensearch-project/opensearch");
 
 const ELASTICSEARCH_URL = process.env.ELASTICSEARCH_URL || 'http://localhost:9200';
 
