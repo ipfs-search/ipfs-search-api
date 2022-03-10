@@ -79,7 +79,7 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-1M/m',
+                from: 'now-1M/h',
               },
             },
           },
@@ -89,7 +89,7 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-1w/m',
+                from: 'now-1w/h',
               },
             },
           },
@@ -99,14 +99,14 @@ const q = {
           filter: {
             range: {
               'last-seen': {
-                from: 'now-1d/m',
+                from: 'now-1d/h',
               },
             },
           },
           weight: 1,
-        }
-      ]
-    }
+        },
+      ],
+    },
   }),
   // Bias against unnamed items
   boostUnnamed: (query) => ({
