@@ -85,4 +85,4 @@ app.use(function (err, req, res, next) {
   error(res, 500, err);
 });
 
-app.listen(port, () => console.log(`ipfs-search search API listening on port ${port}!`));
+app.listen(port, '127.0.0.1', () => console.log(`ipfs-search search API listening on port ${port}!`));
