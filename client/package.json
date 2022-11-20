@@ -24,7 +24,7 @@
   "typings": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc --outDir dist/",
-    "test": "jest",
+    "test": "tsc --noEmit && jest",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
