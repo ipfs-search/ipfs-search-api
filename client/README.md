@@ -36,13 +36,11 @@ const opts = {
   page: 0, // {{Integer}} Page number.
 };
 
-api.searchGet(q, opts).then((error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: {data}');
-  }
-});
+api.searchGet(q, opts).then((data, response) => {
+  console.log('API called successfully. Returned data: {data}')
+}, (error) => {
+  console.error(error)
+})
 ```
 
 #### Metadata
