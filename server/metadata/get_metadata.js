@@ -2,7 +2,6 @@ const client = require('../esclient');
 const types = require('../types');
 
 function process_results(results) {
-  console.log(results)
   var new_results = results.body["_source"]
 
   // Add some metadata to the metadata
