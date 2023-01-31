@@ -56,7 +56,7 @@ function search(q, type, page, pageSize, preference) {
     // max_concurrent_shard_requests: 40,
     // pre_filter_shard_size: 2048,
     // // https://www.elastic.co/guide/en/elasticsearch/reference/current/search-shard-routing.html#shard-and-node-preference
-    // preference: preference,
+    preference: '_local',
   });
 }
 
