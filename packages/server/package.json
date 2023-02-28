@@ -1,0 +1,42 @@
+{
+  "name": "@ipfs-search/api-server",
+  "version": "2.0.0-alpha",
+  "description": "Server for ipfs-search.com's public API.",
+  "keywords": [
+    "ipfs-search",
+    "ipfs",
+    "search",
+    "opensearch"
+  ],
+  "author": "Mathijs de Bruin <mathijs@mathijsfietst.nl>",
+  "homepage": "https://github.com/ipfs-search/ipfs-search-api/tree/main/packages/api-server#readme",
+  "license": "AGPL-3.0-or-later",
+  "main": "dist/main.js",
+  "directories": {
+    "dist": "dist"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipfs-search/ipfs-search-api.git"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/ipfs-search/ipfs-search-api/issues"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "^8.35.0",
+    "eslint-config-prettier": "^8.6.0",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.5"
+  }
+}

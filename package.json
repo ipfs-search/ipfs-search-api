@@ -1,0 +1,31 @@
+{
+  "name": "@ipfs-search/ipfs-search-api",
+  "version": "2.0.0-alpha",
+  "description": "Client and server implementing ipfs-search.com's public API.",
+  "main": "index.js",
+  "scripts": {
+    "build": "lerna run build",
+    "test": "lerna run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipfs-search/ipfs-search-api.git"
+  },
+  "keywords": [
+    "ipfs",
+    "ipfs-search",
+    "search"
+  ],
+  "author": "Mathijs de Bruin",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/ipfs-search/ipfs-search-api/issues"
+  },
+  "homepage": "https://github.com/ipfs-search/ipfs-search-api#readme",
+  "devDependencies": {
+    "lerna": "^6.5.1"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
