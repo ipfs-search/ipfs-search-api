@@ -1,11 +1,11 @@
 import type { CID } from "multiformats/cid";
-import type { SearchResultType, SearchResultSubType } from "./searchresult";
+import type { DocType, DocSubtype } from "./doctypes";
 
 export interface MetadataResult {
   metadata: object;
   version: number;
-  type: SearchResultType.File;
-  subtype: SearchResultSubType;
+  type: DocType.File;
+  subtype: DocSubtype;
 }
 
 export interface MetadataQuery {

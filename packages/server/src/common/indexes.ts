@@ -1,4 +1,4 @@
-import { SearchResultType, SearchResultSubType } from "@ipfs-search/api-types";
+import { DocType, DocSubtype } from "@ipfs-search/api-types";
 
 // Aliases for OpenSearch indexes for subtypes.
 export enum IndexAlias {
@@ -13,11 +13,11 @@ export enum IndexAlias {
   Videos = "ipfs_videos",
 }
 
-// Get the SearchResultType for a given IndexAlias.
-export function getResultType(i: IndexAlias): SearchResultType {
+// Get the DocType for a given IndexAlias.
+export function getResultType(i: IndexAlias): DocType {
   switch (i) {
     case IndexAlias.Directories:
-      return SearchResultType.Directory;
+      return DocType.Directory;
     case IndexAlias.Archives:
     case IndexAlias.Audio:
     case IndexAlias.Data:
@@ -26,66 +26,69 @@ export function getResultType(i: IndexAlias): SearchResultType {
     case IndexAlias.Other:
     case IndexAlias.Unknown:
     case IndexAlias.Videos:
-      return SearchResultType.File;
+      return DocType.File;
     default:
       throw new Error(`Unknown index alias: ${i}`);
   }
 }
 
-// Get the SearchResultSubType for a given IndexAlias.
-export function getResultSubType(i: IndexAlias): SearchResultSubType {
+// Get the DocSubtype for a given IndexAlias.
+export function getResultSubType(i: IndexAlias): DocSubtype {
   switch (i) {
     case IndexAlias.Archives:
-      return SearchResultSubType.Archive;
+      return DocSubtype.Archive;
     case IndexAlias.Audio:
-      return SearchResultSubType.Audio;
+      return DocSubtype.Audio;
     case IndexAlias.Data:
-      return SearchResultSubType.Data;
+      return DocSubtype.Data;
     case IndexAlias.Documents:
-      return SearchResultSubType.Document;
+      return DocSubtype.Document;
     case IndexAlias.Images:
-      return SearchResultSubType.Image;
+      return DocSubtype.Image;
     case IndexAlias.Other:
-      return SearchResultSubType.Other;
+      return DocSubtype.Other;
     case IndexAlias.Unknown:
-      return SearchResultSubType.Unknown;
+      return DocSubtype.Unknown;
     case IndexAlias.Videos:
-      return SearchResultSubType.Video;
+      return DocSubtype.Video;
     default:
       throw new Error(`Unknown index alias: ${i}`);
   }
 }
 
-// Get the IndexAlias for a given SearchResultSubType.
-export function getIndexAlias(subtype: SearchResultSubType): IndexAlias {
+// Get the IndexAlias for a given DocSubtype
+export function getIndexAlias(subtype: DocSubtype): IndexAlias {
   switch (subtype) {
-    case SearchResultSubType.Archive:
+    case DocSubtype.Archive:
       return IndexAlias.Archives;
-    case SearchResultSubType.Audio:
+    case DocSubtype.Audio:
       return IndexAlias.Audio;
-    case SearchResultSubType.Data:
+    case DocSubtype.Data:
       return IndexAlias.Data;
-    case SearchResultSubType.Document:
+    case DocSubtype.Document:
       return IndexAlias.Documents;
-    case SearchResultSubType.Image:
+    case DocSubtype.Image:
       return IndexAlias.Images;
-    case SearchResultSubType.Other:
+    case DocSubtype.Other:
       return IndexAlias.Other;
-    case SearchResultSubType.Unknown:
+    case DocSubtype.Unknown:
       return IndexAlias.Unknown;
-    case SearchResultSubType.Video:
+    case DocSubtype.Video:
       return IndexAlias.Videos;
     default:
       throw new Error(`Unknown search result subtype: ${subtype}`);
   }
 }
 
-// Get the IndexAliases for a given SearchResultType and SearchResultSubType.
-export function getIndexAliases(type: SearchResultType, subtype?: SearchResultSubType): []IndexAlias {
+// Get the IndexAliases for a given DocType and DocSubtype.
+export function getIndexAliases(
+  type: DocType,
+  subtype?: DocSubtype
+): IndexAlias[] {
   switch (type) {
-    case SearchResultType.Directory:
+    case DocType.Directory:
       return [IndexAlias.Directories];
-    case SearchResultType.File:
+    case DocType.File:
       if (subtype) {
         return [getIndexAlias(subtype)];
       } else {

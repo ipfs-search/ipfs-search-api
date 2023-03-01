@@ -1,13 +1,10 @@
-import type { SearchResultType } from "./searchresult";
+import type { DocType, DocSubtype } from "./doctypes";
 
-export enum AnyType {
-  Any = "any",
-}
-
-export type SearchQueryType = SearchResultType | AnyType;
+export type SearchQueryType = DocType | "any";
 
 export interface SearchQuery {
   query: string;
-  type?: SearchQueryType;
-  page?: number;
+  type: DocType;
+  subtype?: DocSubtype;
+  page: number;
 }

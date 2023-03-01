@@ -69,10 +69,27 @@ function boostUnnamed(q: esb.Query): esb.BoostingQuery {
   );
 }
 
+function highlight(): esb.Highlight {
+  return esb
+    .highlight(queryFields)
+    .requireFieldMatch(false)
+    .encoder("html")
+    .numberOfFragments(1)
+    .fragmentSize(250)
+    .scoreOrder();
+}
+
 export default function getSearchQueryBody(
   q: SearchQuery
 ): esb.RequestBodySearch {
   const query = boostUnnamed(recent(queryStringQuery(q.query)));
+  const pageSize = 15;
 
-  return esb.requestBodySearch().query(query);
+  return esb
+    .requestBodySearch()
+    .query(query)
+    .highlight(highlight())
+    .size(pageSize)
+    .from(q.page * pageSize)
+    .source(srcFields);
 }
