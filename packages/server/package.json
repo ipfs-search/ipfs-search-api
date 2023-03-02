@@ -46,8 +46,10 @@
   "dependencies": {
     "@opensearch-project/opensearch": "^2.2.0",
     "debug": "^4.3.4",
+    "downsize": "^0.0.8",
     "elastic-builder": "^2.17.3",
     "express": "^4.18.2",
+    "js-htmlencode": "^0.3.0",
     "multiformats": "^11.0.1"
   }
 }

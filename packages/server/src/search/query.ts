@@ -1,6 +1,7 @@
 import esb from "elastic-builder";
 import type { SearchQuery } from "@ipfs-search/api-types";
 
+// TODO: Update based on mapping.
 const queryFields = [
   "_id^10",
   "metadata.identifier^10",
@@ -19,6 +20,7 @@ const queryFields = [
   "urls",
 ];
 
+// TODO: Update based on mapping.
 const srcFields = [
   "metadata.title",
   "metadata.dc:creator",
