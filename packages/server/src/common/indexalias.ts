@@ -15,7 +15,7 @@ export enum IndexAlias {
   Videos = "ipfs_videos",
 }
 
-// AliasResolver resolves index names to aliases.
+// AliasResolver resolves index names to aliases and vice versa.
 export class AliasResolver {
   client: Client;
   indexToAlias = new Map<string, IndexAlias>();
