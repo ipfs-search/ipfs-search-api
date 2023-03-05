@@ -1,24 +1,40 @@
-// Based on srcFields in query.ts
-// TODO: Update based on mapping.
+import {
+  DocumentField,
+  DocumentNestedField,
+  MetadataField,
+  FlatFieldName,
+} from "./documentfields";
 
-export interface Reference {
-  // hash: string; This is somehow indexed in mapping but neither relevant or used
-  name: string;
-  parent_hash: string;
+enum MetadataSourceField {
+  Title = MetadataField.Title,
+  Creator = MetadataField.Creator,
+  Description = MetadataField.Descripton,
+  ContentType = MetadataField.ContentType,
+  Created = MetadataField.Created,
 }
 
-export interface Metadata {
-  title?: string | string[];
-  "dc:creator"?: string | string[];
-  description?: string | string[];
-  "Content-Type"?: string | string[];
-  "dcterms:created"?: string | string[];
+enum SourceField {
+  References = DocumentNestedField.References,
+  Size = DocumentField.Size,
+  LastSeen = DocumentField.LastSeen,
+  FirstSeen = DocumentField.FirstSeen,
 }
 
-export interface Source {
-  metadata?: Metadata;
-  references?: Reference[];
-  size?: number;
-  "last-seen"?: string;
-  "first-seen"?: string;
-}
+export type Metadata = {
+  [key in MetadataSourceField]: unknown;
+};
+
+export type Source =
+  | {
+      [key in SourceField]: unknown;
+    }
+  | {
+      [DocumentNestedField.Metadata]: Metadata;
+    };
+
+const metadataFields = Object.values(MetadataSourceField);
+const rootFields = Object.values(SourceField);
+
+export const SourceFields: string[] = metadataFields
+  .map((f) => FlatFieldName([DocumentNestedField.Metadata, f as MetadataField]))
+  .concat(rootFields as string[]);

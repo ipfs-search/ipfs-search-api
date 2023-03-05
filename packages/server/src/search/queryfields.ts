@@ -45,6 +45,12 @@ const queryFieldBoostMapping: boostMapping = {
   },
 };
 
-export const QueryFields: Record<string, number> = flatten(
-  queryFieldBoostMapping
-);
+function getQueryFields(): string[] {
+  const flattenedFields: Record<string, number> = flatten(
+    queryFieldBoostMapping
+  );
+
+  return Object.entries(flattenedFields).map(([k, v]) => `${k}^${v}`);
+}
+
+export const QueryFields = getQueryFields();

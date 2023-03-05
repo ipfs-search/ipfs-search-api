@@ -34,3 +34,17 @@ export enum DocumentNestedField {
   References = "references",
   Links = "links",
 }
+
+type field =
+  | DocumentField
+  | [DocumentNestedField.Links, LinksField]
+  | [DocumentNestedField.Metadata, MetadataField]
+  | [DocumentNestedField.References, ReferenceField];
+export function FlatFieldName(f: field): string {
+  if (Array.isArray(f)) {
+    // Nested field
+    return `${f[0]}.${f[1]}`;
+  }
+
+  return f;
+}

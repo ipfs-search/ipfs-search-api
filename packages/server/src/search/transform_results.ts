@@ -16,6 +16,7 @@ import type {
   Reference as SourceReference,
   Source,
   Metadata as SourceMetadata,
+  MetadataKey,
 } from "./source";
 
 export class ResultsTransformer {
@@ -98,7 +99,7 @@ export class ResultsTransformer {
     const titles: string[] = [];
 
     if ("metadata" in src) {
-      const metadata_priority: keyof SourceMetadata = ["title", "name"];
+      const metadata_priority: MetadataKey[] = ["title", "name"];
 
       for (const f of metadata_priority) {
         const t = this.getMetadataField(src, f);
@@ -206,6 +207,7 @@ export class ResultsTransformer {
 
     // "text/html; charset=ISO-8859-1" -> "text/html"
     const split = type.split(";", 1);
+
     assert(split[0]);
     return split[0];
   }
@@ -216,7 +218,7 @@ export class ResultsTransformer {
 
   private getMetadataField(
     src: Source,
-    field: keyof SourceMetadata
+    field: MetadataKey
   ): string | undefined {
     const v = src?.metadata?.[field];
 

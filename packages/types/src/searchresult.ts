@@ -2,36 +2,28 @@ import type { CID } from "multiformats/cid";
 import type { DocType, DocSubtype } from "./doctypes";
 
 export interface Reference {
-  parentHash: CID;
+  parent_hash: CID; // Note; divergence from OpenAPI spec!
   name: string;
 }
 
 export interface SearchResult {
   hash: CID;
   type: DocType;
-  title?: string;
-  author?: string;
-  creation_date: Date;
+  title: string | undefined;
+  author: string | undefined;
+  creation_date: Date | undefined;
   size: number;
-  firstSeen: Date;
-  lastSeen: Date;
-  score: number;
-  references?: Array<Reference>;
+  "first-seen": Date | undefined; // Note; divergence from OpenAPI spec!
+  "last-seen": Date | undefined; // Note; divergence from OpenAPI spec!
+  score: number | undefined;
+  references: Reference[] | undefined;
+  subtype: DocSubtype | undefined;
+  description: string | undefined;
+  mimetype: string | undefined;
 }
 
 export interface SearchResultList {
   total: number;
   maxScore: number;
   hits: Array<SearchResult>;
-}
-
-export interface File extends SearchResult {
-  type: DocType.File;
-  subtype?: DocSubtype;
-  description?: string;
-  mimetype?: string;
-}
-
-export interface Directory extends SearchResult {
-  type: DocType.Directory;
 }

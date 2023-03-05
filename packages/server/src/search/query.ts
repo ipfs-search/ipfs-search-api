@@ -1,40 +1,16 @@
 import esb from "elastic-builder";
 import type { SearchQuery } from "@ipfs-search/api-types";
-
-// TODO: Update based on mapping.
-const queryFields = [
-  "_id^10",
-  "metadata.identifier^10",
-  "metadata.title^8",
-  "metadata.dc:creator^8",
-  "references.name^8",
-  "metadata.subject^5",
-  "metadata.xmpDM:album^5",
-  "metadata.xmpDM:compilation^4",
-  "metadata.description^3",
-  "references.parent_hash^3",
-  "links.Name^3",
-  "links.Hash^2",
-  "metadata.Content-Type^2",
-  "content",
-  "urls",
-];
-
-// TODO: Update based on mapping.
-const srcFields = [
-  "metadata.title",
-  "metadata.dc:creator",
-  "metadata.description",
-  "metadata.Content-Type",
-  "metadata.dcterms:created",
-  "references",
-  "size",
-  "last-seen",
-  "first-seen",
-];
+import { QueryFields } from "./queryfields";
+import {
+  DocumentNestedField,
+  FlatFieldName,
+  MetadataField,
+  ReferenceField,
+} from "./documentfields";
+import { SourceFields } from "./source";
 
 function queryStringQuery(q: string): esb.Query {
-  return esb.queryStringQuery(q).defaultOperator("AND").fields(queryFields);
+  return esb.queryStringQuery(q).defaultOperator("AND").fields(QueryFields);
 }
 
 enum period {
@@ -64,16 +40,22 @@ function recent(q: esb.Query): esb.Query {
 function boostUnnamed(q: esb.Query): esb.BoostingQuery {
   return esb.boostingQuery(
     q,
-    esb.boolQuery().filter([
-      esb.existsQuery("metadata.title"), // Beware! 'title' changed!
-      esb.existsQuery("references.Name"), // Shouldn't this be lower case?
-    ])
+    esb
+      .boolQuery()
+      .filter([
+        esb.existsQuery(
+          FlatFieldName([DocumentNestedField.Metadata, MetadataField.Title])
+        ),
+        esb.existsQuery(
+          FlatFieldName([DocumentNestedField.References, ReferenceField.Name])
+        ),
+      ])
   );
 }
 
 function highlight(): esb.Highlight {
   return esb
-    .highlight(queryFields)
+    .highlight(QueryFields)
     .requireFieldMatch(false)
     .encoder("html")
     .numberOfFragments(1)
@@ -93,5 +75,5 @@ export default function getSearchQueryBody(
     .highlight(highlight())
     .size(pageSize)
     .from(q.page * pageSize)
-    .source(srcFields);
+    .source(SourceFields);
 }
