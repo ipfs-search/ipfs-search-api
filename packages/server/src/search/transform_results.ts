@@ -12,12 +12,7 @@ import { CID } from "multiformats";
 import { default as downsize } from "downsize";
 import { default as htmlEncode } from "js-htmlencode";
 import type { AliasResolver } from "../common/indexalias";
-import type {
-  Reference as SourceReference,
-  Source,
-  Metadata as SourceMetadata,
-  MetadataKey,
-} from "./source";
+import type { Reference as SourceReference, Source } from "./source";
 
 export class ResultsTransformer {
   aliasResolver: AliasResolver;
