@@ -24,6 +24,7 @@ import {
 
 type MetadataKey = keyof Source["metadata"];
 
+export type SearchResponse = SearchHitsMetadata<Source>;
 export class ResultTransformer {
   aliasResolver: AliasResolver;
 
@@ -35,7 +36,7 @@ export class ResultTransformer {
     this.aliasResolver = aliasResolver;
   }
 
-  TransformHits(hits: SearchHitsMetadata<Source>): SearchResultList {
+  TransformHits(hits: SearchResponse): SearchResultList {
     assert(typeof hits.total === "number");
     assert(hits.max_score);
 
