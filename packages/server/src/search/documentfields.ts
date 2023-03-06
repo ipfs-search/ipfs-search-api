@@ -40,6 +40,7 @@ type field =
   | [DocumentNestedField.Links, LinksField]
   | [DocumentNestedField.Metadata, MetadataField]
   | [DocumentNestedField.References, ReferenceField];
+
 export function FlatFieldName(f: field): string {
   if (Array.isArray(f)) {
     // Nested field

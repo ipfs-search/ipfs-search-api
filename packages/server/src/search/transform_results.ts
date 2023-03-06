@@ -13,9 +13,21 @@ import { default as downsize } from "downsize";
 import { default as htmlEncode } from "js-htmlencode";
 import type { AliasResolver } from "../common/indexalias";
 import type { Reference as SourceReference, Source } from "./source";
+import {
+  DocumentField,
+  DocumentNestedField,
+  FlatFieldName,
+  LinksField,
+  MetadataField,
+  ReferenceField,
+} from "./documentfields";
 
-export class ResultsTransformer {
+type MetadataKey = keyof Source["metadata"];
+
+export class ResultTransformer {
   aliasResolver: AliasResolver;
+
+  // Settings
   resultDescriptionLength = 250;
   maxReferences = 8;
 
@@ -37,6 +49,9 @@ export class ResultsTransformer {
   }
 
   private getReference(r: SourceReference): Reference {
+    assert(typeof r.name === "string");
+    assert(typeof r.parent_hash === "string");
+
     return {
       name: r.name,
       parent_hash: CID.parse(r.parent_hash),
@@ -47,6 +62,12 @@ export class ResultsTransformer {
     if (!refs) return [];
 
     return refs.slice(0, this.maxReferences).map(this.getReference);
+  }
+
+  private getSize(src: Source): number {
+    const val = src[DocumentField.Size];
+    assert(val === undefined || typeof val === "number");
+    return val || 0;
   }
 
   private transformHit(hit: SearchHit<Source>): SearchResult {
@@ -61,9 +82,9 @@ export class ResultsTransformer {
       description: this.getDescription(hit),
       type: this.aliasResolver.GetDocType(hit._index),
       subtype: this.aliasResolver.GetDocSubtype(hit._index),
-      size: hit._source.size || 0,
-      "first-seen": this.parseDate(hit._source["first-seen"]),
-      "last-seen": this.parseDate(hit._source["first-seen"]),
+      size: this.getSize(hit._source),
+      "first-seen": this.parseDate(hit._source[DocumentField.FirstSeen]),
+      "last-seen": this.parseDate(hit._source[DocumentField.LastSeen]),
       score: hit._score,
       references: this.getReferences(hit._source.references),
       mimetype: this.getMimetype(hit._source),
@@ -74,10 +95,16 @@ export class ResultsTransformer {
 
   // Return the first one from the priority list or null.
   private getTitlesFromHighlight(result: SearchHit<Source>): string[] {
-    const highlight_priorities = ["metadata.title", "references.name"];
+    const metadataFields = [MetadataField.Title].map((f) =>
+      FlatFieldName([DocumentNestedField.Metadata, f])
+    );
+    const referencesFields = [ReferenceField.Name].map((f) =>
+      FlatFieldName([DocumentNestedField.References, f])
+    );
+    const highlightFields: string[] = metadataFields.concat(referencesFields);
 
     if (result.highlight) {
-      for (const f of highlight_priorities) {
+      for (const f of highlightFields) {
         const h = result.highlight[f];
 
         if (h) {
@@ -94,7 +121,7 @@ export class ResultsTransformer {
     const titles: string[] = [];
 
     if ("metadata" in src) {
-      const metadata_priority: MetadataKey[] = ["title", "name"];
+      const metadata_priority: MetadataKey[] = [MetadataField.Title];
 
       for (const f of metadata_priority) {
         const t = this.getMetadataField(src, f);
@@ -153,19 +180,24 @@ export class ResultsTransformer {
     const hl = result.highlight;
 
     if (hl) {
-      if (hl["content"]) {
-        assert(hl["content"][0]);
-        return hl["content"][0];
+      const content = hl[DocumentField.Content];
+      if (content) {
+        assert(content[0]);
+        return content[0];
       }
 
-      if (hl["links.Name"]) {
+      const linkName =
+        hl[FlatFieldName([DocumentNestedField.Links, LinksField.Name])];
+      if (linkName) {
         // Reference name matching
-        return `Links to &ldquo;${hl["links.Name"][0]}&rdquo;`;
+        return `Links to &ldquo;${linkName[0]}&rdquo;`;
       }
 
-      if (hl["links.Hash"]) {
+      const linkHash =
+        hl[FlatFieldName([DocumentNestedField.Links, LinksField.Hash])];
+      if (linkHash) {
         // Reference name matching
-        return `Links to &ldquo;${hl["links.Hash"][0]}&rdquo;`;
+        return `Links to &ldquo;${linkHash[0]}&rdquo;`;
       }
     }
 
@@ -173,7 +205,7 @@ export class ResultsTransformer {
   }
 
   private getDescriptionFromMetadata(src: Source): string | undefined {
-    const description = this.getMetadataField(src, "description");
+    const description = this.getMetadataField(src, MetadataField.Descripton);
     if (!description) return;
 
     return htmlEncode.htmlEncode(
@@ -197,7 +229,7 @@ export class ResultsTransformer {
   }
 
   private getMimetype(src: Source): string | undefined {
-    const type = this.getMetadataField(src, "Content-Type");
+    const type = this.getMetadataField(src, MetadataField.ContentType);
     if (!type) return;
 
     // "text/html; charset=ISO-8859-1" -> "text/html"
@@ -208,7 +240,7 @@ export class ResultsTransformer {
   }
 
   private getAuthor(src: Source): string | undefined {
-    return this.getMetadataField(src, "dc:creator");
+    return this.getMetadataField(src, MetadataField.Creator);
   }
 
   private getMetadataField(
@@ -219,18 +251,28 @@ export class ResultsTransformer {
 
     if (v instanceof Array) {
       assert(v.length > 0);
-      return v[0];
+      const av = v[0];
+      if (typeof av === "number") {
+        return av.toString();
+      }
+
+      return av;
+    }
+
+    if (typeof v === "number") {
+      return v.toString();
     }
 
     return v;
   }
 
-  private parseDate(i: string | undefined): Date | undefined {
+  private parseDate(i: unknown): Date | undefined {
+    assert(typeof i == "string");
     if (i) return new Date(i);
     return;
   }
 
   private getCreationDate(src: Source): Date | undefined {
-    return this.parseDate(this.getMetadataField(src, "dcterms:created"));
+    return this.parseDate(this.getMetadataField(src, MetadataField.Created));
   }
 }

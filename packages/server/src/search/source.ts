@@ -4,7 +4,6 @@ import {
   MetadataField,
   FlatFieldName,
   ReferenceField,
-  LinksField,
 } from "./documentfields";
 
 // Type tooling.
@@ -44,10 +43,12 @@ type srcReferences = TupleToUnion<
 
 type src = TupleToUnion<Extends<Writeable<typeof rootFields>, DocumentField[]>>;
 
+export type BaseValue = string | number;
+export type SourceValue = BaseValue | BaseValue[];
 export type Reference = FieldsToObject<srcReferences, string>;
-export type Metadata = FieldsToObject<srcMetadata, unknown>;
+export type Metadata = FieldsToObject<srcMetadata, SourceValue>;
 export type Source =
-  | FieldsToObject<src, unknown> & {
+  | FieldsToObject<src, SourceValue> & {
       references: Reference[];
       metadata: Metadata;
     };
