@@ -218,6 +218,7 @@ function getReference(r: SourceReference): Reference {
 }
 
 function getReferences(refs: SourceReference[] | undefined): Reference[] {
+  console.log("refs", refs);
   if (!refs) return [];
 
   return refs.slice(0, maxReferences).map(getReference);
@@ -240,7 +241,7 @@ export class ResultTransformer {
     hits: SearchHitsMetadata<Source>
   ): Promise<SearchResultList> {
     assert(typeof hits.total === "number");
-    assert(hits.max_score);
+    console.log("max_score", hits.max_score);
 
     // Do this in a for loop to prevent resolving aliases in parallel and that's the only blocking operation here..
     const results: SearchResult[] = new Array(hits.hits.length);
@@ -251,7 +252,7 @@ export class ResultTransformer {
     return {
       hits: results,
       total: hits.total,
-      maxScore: hits.max_score,
+      maxScore: hits.max_score || 0,
     };
   }
 

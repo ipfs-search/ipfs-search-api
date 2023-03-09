@@ -55,6 +55,10 @@ export type Source =
     };
 
 // Construct single array with flattened field names for query.
-export const SourceFields: string[] = metadataFields
-  .map((f) => FlatFieldName([DocumentNestedField.Metadata, f]))
-  .concat(rootFields);
+export const SourceFields: string[] = [
+  metadataFields.map((f) => FlatFieldName([DocumentNestedField.Metadata, f])),
+  referenceFields.map((f) =>
+    FlatFieldName([DocumentNestedField.References, f])
+  ),
+  rootFields,
+].flat();
