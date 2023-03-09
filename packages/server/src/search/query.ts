@@ -1,13 +1,14 @@
 import esb from "elastic-builder";
 import type { SearchQuery } from "@ipfs-search/api-types";
-import { QueryFields } from "./queryfields";
+import { QueryFields } from "./queryfields.js";
 import {
+  DocumentField,
   DocumentNestedField,
   FlatFieldName,
   MetadataField,
   ReferenceField,
-} from "./documentfields";
-import { SourceFields } from "./source";
+} from "./documentfields.js";
+import { SourceFields } from "./source.js";
 
 function queryStringQuery(q: string): esb.Query {
   return esb.queryStringQuery(q).defaultOperator("AND").fields(QueryFields);
@@ -20,7 +21,7 @@ enum period {
 }
 
 function lastSeen(term: period): esb.RangeQuery {
-  return esb.rangeQuery("last-seen").from(`now-${term}/h`);
+  return esb.rangeQuery(DocumentField.LastSeen).from(`now-${term}/h`);
 }
 
 function recent(q: esb.Query): esb.Query {
@@ -42,7 +43,7 @@ function boostUnnamed(q: esb.Query): esb.BoostingQuery {
     q,
     esb
       .boolQuery()
-      .filter([
+      .must([
         esb.existsQuery(
           FlatFieldName([DocumentNestedField.Metadata, MetadataField.Title])
         ),
@@ -56,7 +57,7 @@ function boostUnnamed(q: esb.Query): esb.BoostingQuery {
 function highlight(): esb.Highlight {
   return esb
     .highlight(QueryFields)
-    .requireFieldMatch(false)
+    .requireFieldMatch(false) // Content is not in source fields!
     .encoder("html")
     .numberOfFragments(1)
     .fragmentSize(250)

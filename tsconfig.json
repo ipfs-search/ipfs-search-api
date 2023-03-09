@@ -5,7 +5,10 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "removeComments": false,
-    "declaration": true
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node16",
+    "forceConsistentCasingInFileNames": true
   },
 
   "ts-node": {

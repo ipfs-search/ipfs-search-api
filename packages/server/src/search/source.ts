@@ -4,7 +4,7 @@ import {
   MetadataField,
   FlatFieldName,
   ReferenceField,
-} from "./documentfields";
+} from "./documentfields.js";
 
 // Type tooling.
 type TupleToUnion<T extends unknown[]> = T[number]; // Turns as const tuple to union.

@@ -1,5 +1,5 @@
 import type { CID } from "multiformats/cid";
-import type { DocType, DocSubtype } from "./doctypes";
+import type { DocType, DocSubtype } from "./doctypes.js";
 
 export interface Reference {
   parent_hash: CID; // Note; divergence from OpenAPI spec!

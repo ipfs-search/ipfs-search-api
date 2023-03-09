@@ -1,5 +1,5 @@
 import type { CID } from "multiformats/cid";
-import type { DocType, DocSubtype } from "./doctypes";
+import type { DocType, DocSubtype } from "./doctypes.js";
 
 export interface Metadata {
   [propName: string]: unknown;

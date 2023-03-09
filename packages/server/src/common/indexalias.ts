@@ -1,6 +1,6 @@
 import { DocType, DocSubtype } from "@ipfs-search/api-types";
 import { strict as assert } from "node:assert";
-import type { Client } from "@opensearch-project/opensearch/.";
+import type { Client } from "@opensearch-project/opensearch";
 
 // Aliases for OpenSearch indexes for subtypes.
 export enum IndexAlias {
@@ -18,7 +18,7 @@ export enum IndexAlias {
 // AliasResolver resolves index names to aliases and vice versa.
 export class AliasResolver {
   client: Client;
-  indexToAlias = new Map<string, IndexAlias>();
+  indexAliasMap = new Map<string, IndexAlias>();
 
   constructor(client: Client) {
     this.client = client;
@@ -40,7 +40,7 @@ export class AliasResolver {
 
       for (const alias in index.aliases) {
         assert(alias in IndexAlias);
-        this.indexToAlias.set(indexName, alias as IndexAlias);
+        this.indexAliasMap.set(indexName, alias as IndexAlias);
       }
     }
   }
@@ -48,11 +48,11 @@ export class AliasResolver {
   // Get IndexAlias for a given index name.
   private indexToAlias(index: string): IndexAlias {
     // Refresh aliases when index is not found.
-    if (!this.indexToAlias.has(index)) {
+    if (!this.indexAliasMap.has(index)) {
       this.refreshAliases();
     }
 
-    const alias = this.indexToAlias.get(index);
+    const alias = this.indexAliasMap.get(index);
 
     // Throw error when no alias is found after refresh.
     if (!alias) {
@@ -146,7 +146,7 @@ export class AliasResolver {
         return [IndexAlias.Directories];
       case DocType.File:
         if (subtype) {
-          return [getIndexAlias(subtype)];
+          return [this.getIndexAlias(subtype)];
         } else {
           return [
             IndexAlias.Archives,

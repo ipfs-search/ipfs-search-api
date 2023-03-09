@@ -1,8 +1,8 @@
 import type { SearchQuery, SearchResultList } from "@ipfs-search/api-types";
-import type { Client } from "@opensearch-project/opensearch/.";
-import { AliasResolver } from "../common/indexalias";
-import getSearchQueryBody from "./query";
-import { ResultTransformer, SearchResponse } from "./transform_results";
+import type { Client } from "@opensearch-project/opensearch";
+import { AliasResolver } from "../common/indexalias.js";
+import getSearchQueryBody from "./query.js";
+import { ResultTransformer, SearchResponse } from "./transform_results.js";
 
 export class Searcher {
   client: Client;

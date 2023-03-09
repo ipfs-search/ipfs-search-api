@@ -1,5 +1,5 @@
 import { Client } from "@opensearch-project/opensearch";
-import conf from "./conf";
+import conf from "./conf.js";
 
 export default function getClient(): Client {
   return new Client({

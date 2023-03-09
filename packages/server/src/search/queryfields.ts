@@ -6,7 +6,7 @@ import {
   MetadataField,
   ReferenceField,
   DocumentNestedField,
-} from "./documentfields";
+} from "./documentfields.js";
 
 type nestedMapping = {
   [DocumentNestedField.Links]: { [key in LinksField]?: number };

@@ -5,14 +5,14 @@ import type {
   SearchResultList,
 } from "@ipfs-search/api-types";
 import type {
-  SearchHitsMetadata,
   SearchHit,
-} from "@opensearch-project/opensearch/api/types";
+  SearchHitsMetadata,
+} from "@opensearch-project/opensearch/api/types.js";
 import { CID } from "multiformats";
 import { default as downsize } from "downsize";
 import { default as htmlEncode } from "js-htmlencode";
-import type { AliasResolver } from "../common/indexalias";
-import type { Reference as SourceReference, Source } from "./source";
+import type { AliasResolver } from "../common/indexalias.js";
+import type { Reference as SourceReference, Source } from "./source.js";
 import {
   DocumentField,
   DocumentNestedField,
@@ -20,7 +20,7 @@ import {
   LinksField,
   MetadataField,
   ReferenceField,
-} from "./documentfields";
+} from "./documentfields.js";
 
 type MetadataKey = keyof Source["metadata"];
 

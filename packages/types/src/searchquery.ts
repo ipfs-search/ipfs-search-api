@@ -1,4 +1,4 @@
-import type { DocType, DocSubtype } from "./doctypes";
+import type { DocType, DocSubtype } from "./doctypes.js";
 
 export type SearchQueryType = DocType | "any";
 
