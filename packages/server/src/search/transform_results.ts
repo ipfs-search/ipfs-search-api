@@ -68,18 +68,12 @@ function getTitlesFromMetadata(src: Source): string[] {
 
 // Attempt to get title from references.
 function getTitleReferences(src: Source): string[] {
-  const titles: string[] = [];
+  if (!src.references) return [];
+  assert(Array.isArray(src.references));
 
-  if (src.references) {
-    src.references.forEach((item) => {
-      if (item.name && item.name.length > 1) {
-        // TODO: Skip references names which are CID's.
-        titles.push(item.name);
-      }
-    });
-  }
-
-  return titles;
+  return src.references
+    .filter((i) => i && i.name && i.name.length > 1 && !CID.asCID(i.name))
+    .map((i) => i.name as string);
 }
 
 // Get title from result
@@ -95,9 +89,7 @@ function getTitle(result: SearchHit<Source>): string | undefined {
   assert(src);
   const titleFuncs = [getTitlesFromMetadata, getTitleReferences];
   const titlesLs = titleFuncs.map((f) => f(src));
-  console.log("titlesLs", titlesLs);
   const titles = titlesLs.flat();
-  console.log("titles", titles);
   if (titles.length === 0) return undefined;
 
   // Pick the longest title
@@ -213,12 +205,11 @@ function getReference(r: SourceReference): Reference {
 
   return {
     name: r.name,
-    parent_hash: CID.parse(r.parent_hash),
+    parent_hash: CID.parse(r.parent_hash).toV1().toString(),
   };
 }
 
 function getReferences(refs: SourceReference[] | undefined): Reference[] {
-  console.log("refs", refs);
   if (!refs) return [];
 
   return refs.slice(0, maxReferences).map(getReference);
@@ -241,7 +232,6 @@ export class ResultTransformer {
     hits: SearchHitsMetadata<Source>
   ): Promise<SearchResultList> {
     assert(typeof hits.total === "number");
-    console.log("max_score", hits.max_score);
 
     // Do this in a for loop to prevent resolving aliases in parallel and that's the only blocking operation here..
     const results: SearchResult[] = new Array(hits.hits.length);
@@ -262,10 +252,13 @@ export class ResultTransformer {
   ): Promise<SearchResult> {
     assert("_source" in hit);
     assert("_score" in hit);
-    assert(typeof hit._source.cid === "string");
 
     const result: SearchResult = {
-      hash: CID.parse(hit._source.cid),
+      hash: CID.parse(
+        typeof hit._source.cid === "string" ? hit._source.cid : hit._id
+      )
+        .toV1()
+        .toString(), // Fallback to _id for directories.
       title: getTitle(hit),
       author: getAuthor(hit._source),
       creation_date: getCreationDate(hit._source),

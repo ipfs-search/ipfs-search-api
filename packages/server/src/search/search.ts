@@ -21,6 +21,8 @@ export class Searcher {
   async search(q: SearchQuery): Promise<SearchResultList> {
     const indexes = this.aliasResolver.GetIndexAliases(q.type, q.subtype);
 
+    console.log("Querying indexes:", indexes);
+
     const body = getSearchQueryBody(q).toJSON();
 
     const resp = await this.client.search<SearchResponse<Source>>({

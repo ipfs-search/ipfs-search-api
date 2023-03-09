@@ -1,13 +1,12 @@
-import type { CID } from "multiformats/cid";
 import type { DocType, DocSubtype } from "./doctypes.js";
 
 export interface Reference {
-  parent_hash: CID; // Note; divergence from OpenAPI spec!
+  parent_hash: string; // Note; divergence from OpenAPI spec!
   name: string;
 }
 
 export interface SearchResult {
-  hash: CID;
+  hash: string;
   type: DocType;
   title: string | undefined;
   author: string | undefined;

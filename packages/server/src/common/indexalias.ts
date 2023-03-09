@@ -35,7 +35,7 @@ function getDocType(i: IndexAlias): DocType {
 }
 
 // Get the DocSubtype for a given IndexAlias.
-function getDocSubtype(i: IndexAlias): DocSubtype {
+function getDocSubtype(i: IndexAlias): DocSubtype | undefined {
   switch (i) {
     case IndexAlias.Archives:
       return DocSubtype.Archive;
@@ -53,6 +53,8 @@ function getDocSubtype(i: IndexAlias): DocSubtype {
       return DocSubtype.Unknown;
     case IndexAlias.Videos:
       return DocSubtype.Video;
+    case IndexAlias.Directories:
+      return undefined;
     default:
       throw new Error(`Unknown index alias: ${i}`);
   }
@@ -123,7 +125,6 @@ export class AliasResolver {
     }
 
     const alias = this.indexAliasMap.get(index);
-    console.log(this.indexAliasMap);
 
     // Throw error when no alias is found after refresh.
     if (!alias) {
@@ -139,15 +140,17 @@ export class AliasResolver {
   }
 
   // Get the DocSubtype for a given index name.
-  async GetDocSubtype(index: string): Promise<DocSubtype> {
+  async GetDocSubtype(index: string): Promise<DocSubtype | undefined> {
     return getDocSubtype(await this.indexToAlias(index));
   }
 
   // Get the IndexAliases for a given DocType and DocSubtype.
   GetIndexAliases(type: SearchQueryType, subtype?: DocSubtype): IndexAlias[] {
+    console.log("Type", type);
     switch (type) {
       case "any":
-        return Object.keys(IndexAlias) as IndexAlias[];
+        console.log("any", IndexAlias);
+        return Object.values(IndexAlias);
       case DocType.Directory:
         return [IndexAlias.Directories];
       case DocType.File:

@@ -74,11 +74,14 @@ export default function getSearchQueryBody(
   const query = boostUnnamed(recent(queryStringQuery(q.query)));
   const pageSize = 15;
 
-  return esb
-    .requestBodySearch()
-    .query(query)
-    .highlight(highlight())
-    .size(pageSize)
-    .from(q.page * pageSize)
-    .source(SourceFields);
+  return (
+    esb
+      .requestBodySearch()
+      // .terminateAfter(10000) // Possible optimisation.
+      .query(query)
+      .highlight(highlight())
+      .size(pageSize)
+      .from(q.page * pageSize)
+      .source(SourceFields)
+  );
 }
