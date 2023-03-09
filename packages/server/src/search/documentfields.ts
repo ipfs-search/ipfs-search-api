@@ -12,10 +12,10 @@ export enum LinksField {
 }
 
 export enum MetadataField {
-  Title = "title",
+  Title = "dc:title",
   Creator = "dc:creator",
   Identifier = "dc:Identifier",
-  Descripton = "description",
+  Descripton = "dc:description",
   ContentType = "Content-Type",
   Created = "dcterms:created",
 }

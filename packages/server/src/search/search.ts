@@ -1,8 +1,10 @@
 import type { SearchQuery, SearchResultList } from "@ipfs-search/api-types";
 import type { Client } from "@opensearch-project/opensearch";
+import type { SearchResponse } from "@opensearch-project/opensearch/api/types.js";
 import { AliasResolver } from "../common/indexalias.js";
 import getSearchQueryBody from "./query.js";
-import { ResultTransformer, SearchResponse } from "./transform_results.js";
+import type { Source } from "./source.js";
+import { ResultTransformer } from "./transform_results.js";
 
 export class Searcher {
   client: Client;
@@ -21,7 +23,7 @@ export class Searcher {
 
     const body = getSearchQueryBody(q).toJSON();
 
-    const resp = await this.client.search<SearchResponse>({
+    const resp = await this.client.search<SearchResponse<Source>>({
       index: indexes,
       body: body,
 
@@ -37,6 +39,6 @@ export class Searcher {
       rest_total_hits_as_int: true,
     });
 
-    return this.resultTransformer.TransformHits(resp.body);
+    return this.resultTransformer.TransformHits(resp.body.hits);
   }
 }

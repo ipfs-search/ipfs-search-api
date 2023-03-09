@@ -28,6 +28,7 @@ const referenceFields = [
 ] as const;
 
 const rootFields = [
+  DocumentField.CID,
   DocumentField.Size,
   DocumentField.LastSeen,
   DocumentField.FirstSeen,

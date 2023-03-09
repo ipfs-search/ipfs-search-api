@@ -1,14 +1,15 @@
 import conf from "./common/conf.js";
-import Fastify, {
-  FastifyInstance,
-  FastifyLoggerOptions,
-  RouteShorthandOptions,
-} from "fastify";
+import Fastify, { FastifyInstance, FastifyLoggerOptions } from "fastify";
 import type { PinoLoggerOptions } from "fastify/types/logger.js";
 import type { Server } from "http";
+import { Searcher } from "./search/search.js";
+import type { Client } from "@opensearch-project/opensearch";
+import type { SearchQuery } from "@ipfs-search/api-types";
 
-type logger = boolean | (FastifyLoggerOptions<Server> & PinoLoggerOptions);
-const envToLogger: Record<string, logger> = {
+// From Fastify type.
+type Logger = boolean | (FastifyLoggerOptions<Server> & PinoLoggerOptions);
+
+const envToLogger: Record<string, Logger> = {
   development: {
     transport: {
       target: "pino-pretty",
@@ -22,31 +23,58 @@ const envToLogger: Record<string, logger> = {
   test: false,
 };
 
-const app: FastifyInstance = Fastify({
-  logger: envToLogger[conf.environment] ?? true,
-});
+type Querystring = Omit<SearchQuery, "query"> & { q: string };
 
-const opts: RouteShorthandOptions = {
-  schema: {
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          pong: {
-            type: "string",
+export default function App(client: Client) {
+  const app: FastifyInstance = Fastify({
+    logger: envToLogger[conf.environment] ?? true,
+  });
+  const searcher = new Searcher(client);
+
+  app.get<{ Querystring: Querystring }>(
+    "/search",
+    {
+      schema: {
+        querystring: {
+          type: "object",
+          properties: {
+            q: {
+              // TODO: Validate max length and possibly max terms.
+              type: "string",
+            },
+            page: {
+              // TODO: Validate >0 and <maxPage
+              type: "integer",
+              default: 0,
+            },
+            type: {
+              // TODO: Use enum
+              type: "string",
+              default: "any",
+            },
+            subtype: {
+              // TODO: Use enum
+              type: "string",
+            },
           },
         },
       },
     },
-  },
-};
+    async (request) => {
+      const { page, type, subtype } = request.query;
+      const query: SearchQuery = {
+        query: request.query.q,
+        page,
+        type,
+      };
 
-// app.get("/ping", opts, async (request, reply) => {
-//   return { pong: "it worked!" };
-// });
+      if (subtype) {
+        query.subtype = subtype;
+      }
 
-app.get("/ping", opts, async () => {
-  return { pong: "it worked!" };
-});
+      return searcher.search(query);
+    }
+  );
 
-export default app;
+  return app;
+}

@@ -1,12 +1,12 @@
 import process from "process";
 
-enum Environment {
+export enum Environment {
   Development = "development",
   Production = "production",
   Test = "test",
 }
 
-type Configuration = {
+export type Configuration = {
   openSearchURL: string;
   environment: Environment;
 };

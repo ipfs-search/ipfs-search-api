@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "DocSubtype": {
+            "enum": [
+                "archive",
+                "audio",
+                "data",
+                "document",
+                "image",
+                "other",
+                "unknown",
+                "video"
+            ],
+            "type": "string"
+        },
+        "SearchQuery": {
+            "properties": {
+                "page": {
+                    "type": "number"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "subtype": {
+                    "$ref": "#/definitions/DocSubtype"
+                },
+                "type": {
+                    "$ref": "#/definitions/SearchQueryType"
+                }
+            },
+            "type": "object"
+        },
+        "SearchQueryType": {
+            "enum": [
+                "any",
+                "directory",
+                "file"
+            ],
+            "type": "string"
+        }
+    }
+}
+

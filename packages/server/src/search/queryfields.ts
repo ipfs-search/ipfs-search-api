@@ -1,4 +1,4 @@
-import { flatten } from "flat";
+import { default as flatten } from "flat";
 
 import {
   DocumentField,

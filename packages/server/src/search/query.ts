@@ -11,6 +11,8 @@ import {
 import { SourceFields } from "./source.js";
 
 function queryStringQuery(q: string): esb.Query {
+  console.log(q);
+
   return esb.queryStringQuery(q).defaultOperator("AND").fields(QueryFields);
 }
 
@@ -43,14 +45,15 @@ function boostUnnamed(q: esb.Query): esb.BoostingQuery {
     q,
     esb
       .boolQuery()
-      .must([
+      .filter([
         esb.existsQuery(
           FlatFieldName([DocumentNestedField.Metadata, MetadataField.Title])
         ),
         esb.existsQuery(
           FlatFieldName([DocumentNestedField.References, ReferenceField.Name])
         ),
-      ])
+      ]),
+    0.5
   );
 }
 
@@ -67,6 +70,7 @@ function highlight(): esb.Highlight {
 export default function getSearchQueryBody(
   q: SearchQuery
 ): esb.RequestBodySearch {
+  console.log(q);
   const query = boostUnnamed(recent(queryStringQuery(q.query)));
   const pageSize = 15;
 

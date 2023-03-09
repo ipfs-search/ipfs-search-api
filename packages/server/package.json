@@ -52,11 +52,12 @@
     "@opensearch-project/opensearch": "^2.2.0",
     "debug": "^4.3.4",
     "downsize": "^0.0.8",
-    "elastic-builder": "^2.17.3",
+    "elastic-builder": "^2.18",
     "fastify": "^4.14.1",
     "flat": "^5.0.2",
     "js-htmlencode": "^0.3.0",
     "multiformats": "^11.0.1",
-    "pino-pretty": "^9.4.0"
+    "pino-pretty": "^9.4.0",
+    "typescript-json-schema": "^0.55.0"
   }
 }

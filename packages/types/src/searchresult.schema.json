@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "CID": {
+      "type": "string"
+    },
+    "DocSubtype": {
+      "enum": [
+        "archive",
+        "audio",
+        "data",
+        "document",
+        "image",
+        "other",
+        "unknown",
+        "video"
+      ],
+      "type": "string"
+    },
+    "DocType": {
+      "enum": ["directory", "file"],
+      "type": "string"
+    },
+    "Reference": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "parent_hash": {
+          "$ref": "#/definitions/CID"
+        }
+      },
+      "type": "object"
+    },
+    "SearchResult": {
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "creation_date": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "first-seen": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "hash": {
+          "$ref": "#/definitions/CID"
+        },
+        "last-seen": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "mimetype": {
+          "type": "string"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/definitions/Reference"
+          },
+          "type": "array"
+        },
+        "score": {
+          "type": "number"
+        },
+        "size": {
+          "type": "number"
+        },
+        "subtype": {
+          "$ref": "#/definitions/DocSubtype"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/DocType"
+        }
+      },
+      "type": "object"
+    },
+    "SearchResultList": {
+      "properties": {
+        "hits": {
+          "items": {
+            "$ref": "#/definitions/SearchResult"
+          },
+          "type": "array"
+        },
+        "maxScore": {
+          "type": "number"
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

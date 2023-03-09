@@ -3,6 +3,13 @@
 
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+
+    // https://www.npmjs.com/package/ts-node#missing-types
+    "typeRoots": [
+      "./typings",
+      "./node_modules/@types",
+      "../../node_modules/@types"
+    ]
   }
 }
