@@ -239,6 +239,8 @@ export class ResultTransformer {
       results[index] = await this.transformHit(hit);
     }
 
+    console.log(hits);
+
     return {
       hits: results,
       total: hits.total,
@@ -253,6 +255,8 @@ export class ResultTransformer {
     assert("_source" in hit);
     assert("_score" in hit);
 
+    const [type, subtype] = await this.aliasResolver.GetDocType(hit._index);
+
     const result: SearchResult = {
       hash: CID.parse(
         typeof hit._source.cid === "string" ? hit._source.cid : hit._id
@@ -263,14 +267,14 @@ export class ResultTransformer {
       author: getAuthor(hit._source),
       creation_date: getCreationDate(hit._source),
       description: getDescription(hit),
-      type: await this.aliasResolver.GetDocType(hit._index),
-      subtype: await this.aliasResolver.GetDocSubtype(hit._index),
       size: getSize(hit._source),
       "first-seen": parseDate(hit._source[DocumentField.FirstSeen]),
       "last-seen": parseDate(hit._source[DocumentField.LastSeen]),
       score: hit._score,
       references: getReferences(hit._source.references),
       mimetype: getMimetype(hit._source),
+      type,
+      subtype,
     };
 
     return result;

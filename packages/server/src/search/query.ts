@@ -9,10 +9,9 @@ import {
   ReferenceField,
 } from "./documentfields.js";
 import { SourceFields } from "./source.js";
+import conf from "../common/conf.js";
 
 function queryStringQuery(q: string): esb.Query {
-  console.log(q);
-
   return esb.queryStringQuery(q).defaultOperator("AND").fields(QueryFields);
 }
 
@@ -70,9 +69,8 @@ function highlight(): esb.Highlight {
 export default function getSearchQueryBody(
   q: SearchQuery
 ): esb.RequestBodySearch {
-  console.log(q);
   const query = boostUnnamed(recent(queryStringQuery(q.query)));
-  const pageSize = 15;
+  const { pageSize } = conf;
 
   return (
     esb

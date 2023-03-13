@@ -1,6 +1,9 @@
+import { default as makeDebugger } from "debug";
 import { DocType, DocSubtype, SearchQueryType } from "@ipfs-search/api-types";
 import { strict as assert } from "node:assert";
 import type { Client } from "@opensearch-project/opensearch";
+
+const debug = makeDebugger("ipfs-search:indexalias");
 
 // Aliases for OpenSearch indexes for subtypes.
 export enum IndexAlias {
@@ -14,6 +17,19 @@ export enum IndexAlias {
   Unknown = "ipfs_unknown",
   Videos = "ipfs_videos",
 }
+
+type FileIndex = Exclude<IndexAlias, IndexAlias.Directories>;
+
+const fileIndexes: FileIndex[] = [
+  IndexAlias.Archives,
+  IndexAlias.Audio,
+  IndexAlias.Data,
+  IndexAlias.Documents,
+  IndexAlias.Images,
+  IndexAlias.Other,
+  IndexAlias.Unknown,
+  IndexAlias.Videos,
+];
 
 // Get the DocType for a given IndexAlias.
 function getDocType(i: IndexAlias): DocType {
@@ -35,7 +51,7 @@ function getDocType(i: IndexAlias): DocType {
 }
 
 // Get the DocSubtype for a given IndexAlias.
-function getDocSubtype(i: IndexAlias): DocSubtype | undefined {
+function getDocSubtype(i: FileIndex): DocSubtype {
   switch (i) {
     case IndexAlias.Archives:
       return DocSubtype.Archive;
@@ -53,15 +69,13 @@ function getDocSubtype(i: IndexAlias): DocSubtype | undefined {
       return DocSubtype.Unknown;
     case IndexAlias.Videos:
       return DocSubtype.Video;
-    case IndexAlias.Directories:
-      return undefined;
     default:
       throw new Error(`Unknown index alias: ${i}`);
   }
 }
 
 // Get the IndexAlias for a given DocSubtype
-function getIndexAlias(subtype: DocSubtype): IndexAlias {
+function getIndexAlias(subtype: DocSubtype): FileIndex {
   switch (subtype) {
     case DocSubtype.Archive:
       return IndexAlias.Archives;
@@ -128,45 +142,44 @@ export class AliasResolver {
 
     // Throw error when no alias is found after refresh.
     if (!alias) {
-      throw new Error(`Unknown index: ${index}`);
+      throw new Error(`Unknown index '${index}'.`);
     }
 
     return alias;
   }
 
-  // Get the DocType for a given index name.
-  async GetDocType(index: string): Promise<DocType> {
-    return getDocType(await this.indexToAlias(index));
+  // Get the DocType and DocSubType for a given index name.
+  async GetDocType(index: string): Promise<[DocType, DocSubtype?]> {
+    const alias = await this.indexToAlias(index);
+    const type = getDocType(alias);
+    if (alias === IndexAlias.Directories) return [type];
+
+    const subtype = getDocSubtype(alias);
+    return [type, subtype];
   }
 
-  // Get the DocSubtype for a given index name.
-  async GetDocSubtype(index: string): Promise<DocSubtype | undefined> {
-    return getDocSubtype(await this.indexToAlias(index));
-  }
+  // DocSubtype | undefined> {
+  //   return getDocSubtype(await this.indexToAlias(index));
+  // }
 
   // Get the IndexAliases for a given DocType and DocSubtype.
-  GetIndexAliases(type: SearchQueryType, subtype?: DocSubtype): IndexAlias[] {
-    console.log("Type", type);
+  GetIndexAliases(
+    type: SearchQueryType,
+    subtypes?: DocSubtype[]
+  ): IndexAlias[] {
     switch (type) {
       case "any":
-        console.log("any", IndexAlias);
         return Object.values(IndexAlias);
       case DocType.Directory:
         return [IndexAlias.Directories];
       case DocType.File:
-        if (subtype) {
-          return [getIndexAlias(subtype)];
+        if (subtypes && subtypes.length > 0) {
+          debug("subtypes", subtypes);
+          return subtypes.map(getIndexAlias);
         } else {
-          return [
-            IndexAlias.Archives,
-            IndexAlias.Audio,
-            IndexAlias.Data,
-            IndexAlias.Documents,
-            IndexAlias.Images,
-            IndexAlias.Other,
-            IndexAlias.Unknown,
-            IndexAlias.Videos,
-          ];
+          // Return all indexes.
+          debug(fileIndexes);
+          return fileIndexes.map((i) => i as FileIndex);
         }
       default:
         throw new Error(`Unknown search result type: ${type}`);

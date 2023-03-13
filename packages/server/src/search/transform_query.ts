@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { DocSubtype } from "@ipfs-search/api-types";
+import { DocSubtype, DocType, SearchQuery } from "@ipfs-search/api-types";
 
 // Unparsed queries from frontend.
 const stringQueries = {
@@ -29,10 +29,10 @@ type parsedQuery = {
 // ];
 
 // Parse unparsed string query into Query.
-function parseQuery(query: string): parsedQuery[] {
-  // Allow for arbitrary query content before and after metadata.Content-Type filter and multiple matches.
-  const regex = /(?'negate'NOT)? metadata\.Content-Type:\((?'types'[^)]*)\)/g;
-  const matches = [...query.matchAll(regex)];
+function parseQuery(stringQuery: string): parsedQuery[] {
+  // Allow for arbitrary stringQuery content before and after metadata.Content-Type filter and multiple matches.
+  const regex = /(?<negate>NOT\s+)?metadata\.Content-Type:\((?<types>[^)]*)\)/g;
+  const matches = [...stringQuery.matchAll(regex)];
 
   return matches.map((match) => {
     assert(match.groups?.["types"]);
@@ -60,9 +60,10 @@ function getQueryDocTypes(): [parsedQuery, DocSubtype[]][] {
     ],
   };
 
-  return Object.entries(queryDocTypes).map(([query, doctypes]) => {
-    const parsed = parseQuery(query);
-    assert(parsed[0]);
+  return Object.entries(queryDocTypes).map(([k, doctypes]) => {
+    const stringQuery = stringQueries[k as keyof typeof stringQueries];
+    const parsed = parseQuery(stringQuery);
+    assert(parsed[0], `No parsed query found in ${parsed} for ${stringQuery}`);
     return [parsed[0], doctypes];
   });
 }
@@ -70,7 +71,7 @@ function getQueryDocTypes(): [parsedQuery, DocSubtype[]][] {
 const mappedQueryDocTypes = getQueryDocTypes();
 
 // Get subtypes from query, allows for multiple matches or empty list if none match.
-function getSubtypes(query: string): DocSubtype[] {
+function getSubtypeFromQuery(query: string): DocSubtype[] {
   const parsed = parseQuery(query);
   if (!parsed) return [];
 
@@ -94,4 +95,17 @@ function getSubtypes(query: string): DocSubtype[] {
   }
 
   return subtypes;
+}
+
+export class QueryTransformer {
+  TransformQuery(q: SearchQuery): SearchQuery {
+    // Don't modify query in-place
+    const newq = { ...q };
+
+    if (newq.type === DocType.File && !newq.subtypes) {
+      newq.subtypes = getSubtypeFromQuery(newq.query);
+    }
+
+    return q;
+  }
 }

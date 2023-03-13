@@ -1,4 +1,4 @@
-import { default as flatten } from "flat";
+import flatten from "flat";
 
 import {
   DocumentField,
@@ -46,6 +46,7 @@ const queryFieldBoostMapping: boostMapping = {
 };
 
 function getQueryFields(): string[] {
+  // Take a nested Javascript object and flatten it, or unflatten an object with delimited keys.
   const flattenedFields: Record<string, number> = flatten(
     queryFieldBoostMapping
   );

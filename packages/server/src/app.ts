@@ -4,7 +4,12 @@ import type { PinoLoggerOptions } from "fastify/types/logger.js";
 import type { Server } from "http";
 import { Searcher } from "./search/search.js";
 import type { Client } from "@opensearch-project/opensearch";
-import type { SearchQuery } from "@ipfs-search/api-types";
+import {
+  DocSubtype,
+  DocType,
+  SearchQuery,
+  SearchQueryType,
+} from "@ipfs-search/api-types";
 
 // From Fastify type.
 type Logger = boolean | (FastifyLoggerOptions<Server> & PinoLoggerOptions);
@@ -25,6 +30,11 @@ const envToLogger: Record<string, Logger> = {
 
 type Querystring = Omit<SearchQuery, "query"> & { q: string };
 
+function getSearchQueryTypes(): SearchQueryType[] {
+  const t: SearchQueryType[] = Object.values(DocType);
+  return t.concat("any");
+}
+
 export default function App(client: Client) {
   const app: FastifyInstance = Fastify({
     logger: envToLogger[conf.environment] ?? true,
@@ -39,39 +49,43 @@ export default function App(client: Client) {
           type: "object",
           properties: {
             q: {
-              // TODO: Validate max length and possibly max terms.
               type: "string",
+              maxLength: 1684,
             },
             page: {
-              // TODO: Validate >0 and <maxPage
               type: "integer",
               default: 0,
+              minimum: 0,
+              maximum: conf.maxPage,
             },
             type: {
-              // TODO: Use enum
               type: "string",
               default: "any",
+              enum: getSearchQueryTypes(),
             },
-            subtype: {
-              // TODO: Use enum
-              type: "string",
+            subtypes: {
+              type: "array",
+              uniqueItems: true,
+              maxItems: Object.keys(DocSubtype).length,
+              items: {
+                type: "string",
+                enum: Object.values(DocSubtype),
+              },
             },
           },
         },
       },
     },
     async (request) => {
-      const { page, type, subtype } = request.query;
+      const { page, type, subtypes } = request.query;
       const query: SearchQuery = {
         query: request.query.q,
         page,
         type,
+        subtypes: subtypes ? subtypes : [],
       };
 
-      if (subtype) {
-        query.subtype = subtype;
-      }
-
+      // TODO: Propagate 429.
       return searcher.search(query);
     }
   );

@@ -6,13 +6,12 @@ import {
   ReferenceField,
 } from "./documentfields.js";
 
-// Type tooling.
-type TupleToUnion<T extends unknown[]> = T[number]; // Turns as const tuple to union.
-type Writeable<T> = { -readonly [P in keyof T]: T[P] }; // as const produces readonly types.
-type Extends<T extends V, V> = T; // Validates fields.
-type FieldsToObject<T extends string, V> = {
-  [key in T]?: V;
-};
+import type {
+  TupleToUnion,
+  Extends,
+  Writeable,
+  FieldsToObject,
+} from "../common/typehelpers.js";
 
 const metadataFields = [
   MetadataField.Title,

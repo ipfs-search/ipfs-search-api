@@ -5,6 +5,6 @@ export type SearchQueryType = DocType | "any";
 export interface SearchQuery {
   query: string;
   type: SearchQueryType;
-  subtype?: DocSubtype;
+  subtypes?: DocSubtype[];
   page: number;
 }

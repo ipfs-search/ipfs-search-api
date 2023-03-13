@@ -1,29 +1,38 @@
+import { strict as assert } from "node:assert";
+import { default as makeDebugger } from "debug";
 import type { SearchQuery, SearchResultList } from "@ipfs-search/api-types";
 import type { Client } from "@opensearch-project/opensearch";
 import type { SearchResponse } from "@opensearch-project/opensearch/api/types.js";
 import { AliasResolver } from "../common/indexalias.js";
 import getSearchQueryBody from "./query.js";
 import type { Source } from "./source.js";
+import { QueryTransformer } from "./transform_query.js";
 import { ResultTransformer } from "./transform_results.js";
+
+const debug = makeDebugger("ipfs-search:search");
 
 export class Searcher {
   client: Client;
   aliasResolver: AliasResolver;
+  queryTransformer: QueryTransformer;
   resultTransformer: ResultTransformer;
 
   constructor(client: Client) {
     this.client = client;
-
     this.aliasResolver = new AliasResolver(client);
     this.resultTransformer = new ResultTransformer(this.aliasResolver);
+    this.queryTransformer = new QueryTransformer();
   }
 
   async search(q: SearchQuery): Promise<SearchResultList> {
-    const indexes = this.aliasResolver.GetIndexAliases(q.type, q.subtype);
+    const indexes = this.aliasResolver.GetIndexAliases(q.type, q.subtypes);
+    assert(indexes.length, "No indexes to search for.");
+    debug("indexes", indexes);
 
-    console.log("Querying indexes:", indexes);
+    const newq = this.queryTransformer.TransformQuery(q);
 
-    const body = getSearchQueryBody(q).toJSON();
+    const body = getSearchQueryBody(newq).toJSON();
+    debug("body", body);
 
     const resp = await this.client.search<SearchResponse<Source>>({
       index: indexes,
