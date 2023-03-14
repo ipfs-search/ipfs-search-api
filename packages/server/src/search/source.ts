@@ -50,7 +50,7 @@ export type Metadata = FieldsToObject<srcMetadata, SourceValue>;
 export type Source =
   | FieldsToObject<src, SourceValue> & {
       references: Reference[];
-      metadata: Metadata;
+      metadata?: Metadata;
     };
 
 // Construct single array with flattened field names for query.

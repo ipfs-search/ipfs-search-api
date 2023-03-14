@@ -1,5 +1,7 @@
 import { strict as assert } from "node:assert";
 import type {
+  DocSubtype,
+  DocType,
   Reference,
   SearchResult,
   SearchResultList,
@@ -11,8 +13,11 @@ import type {
 import { CID } from "multiformats";
 import downsize from "downsize";
 import htmlEncode from "js-htmlencode";
-import type { AliasResolver } from "../common/indexalias.js";
-import type { Reference as SourceReference, Source } from "./source.js";
+import type {
+  Reference as SourceReference,
+  Source,
+  Metadata,
+} from "./source.js";
 import {
   DocumentField,
   DocumentNestedField,
@@ -21,8 +26,11 @@ import {
   MetadataField,
   ReferenceField,
 } from "./documentfields.js";
+import { default as makeDebug } from "debug";
 
-type MetadataKey = keyof Source["metadata"];
+const debug = makeDebug("ipfs-search:transform_results");
+
+type MetadataKey = keyof Metadata;
 
 const resultDescriptionLength = 250;
 const maxReferences = 8;
@@ -221,6 +229,10 @@ function getSize(src: Source): number {
   return val || 0;
 }
 
+interface AliasResolver {
+  GetDocType(index: string): Promise<[DocType, DocSubtype?]>;
+}
+
 export class ResultTransformer {
   aliasResolver: AliasResolver;
 
@@ -237,9 +249,8 @@ export class ResultTransformer {
     const results: SearchResult[] = new Array(hits.hits.length);
     for (const [index, hit] of hits.hits.entries()) {
       results[index] = await this.transformHit(hit);
+      debug("Transformed", hit, "into", results[index]);
     }
-
-    console.log(hits);
 
     return {
       hits: results,
