@@ -4,6 +4,7 @@ import App from "./app.js";
 const start = async () => {
   const client = new Client({
     node: "http://localhost:9200", // TODO: Make configurable.
+    maxRetries: 0, // Retries should be handled by load balancer.
   });
   const app = App(client);
 

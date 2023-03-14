@@ -1,7 +1,6 @@
 import conf from "./common/conf.js";
 import Fastify, { FastifyInstance, FastifyLoggerOptions } from "fastify";
 import type { PinoLoggerOptions } from "fastify/types/logger.js";
-import type { Server } from "http";
 import { Searcher } from "./search/search.js";
 import type { Client } from "@opensearch-project/opensearch";
 import {
@@ -12,7 +11,7 @@ import {
 } from "@ipfs-search/api-types";
 
 // From Fastify type.
-type Logger = boolean | (FastifyLoggerOptions<Server> & PinoLoggerOptions);
+type Logger = FastifyLoggerOptions | PinoLoggerOptions | boolean;
 
 const envToLogger: Record<string, Logger> = {
   development: {
@@ -85,7 +84,7 @@ export default function App(client: Client) {
         subtypes: subtypes ? subtypes : [],
       };
 
-      // TODO: Propagate 429.
+      // TODO: Test whether 429's are propagated.
       return searcher.search(query);
     }
   );
