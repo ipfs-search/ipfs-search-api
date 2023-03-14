@@ -24,6 +24,7 @@
   "homepage": "https://github.com/ipfs-search/ipfs-search-api#readme",
   "devDependencies": {
     "@tsconfig/node16-strictest-esm": "^1.0.3",
+    "eslint-plugin-mocha": "^10.1.0",
     "lerna": "^6.5.1"
   },
   "workspaces": [

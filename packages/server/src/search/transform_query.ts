@@ -1,6 +1,9 @@
 import { strict as assert } from "node:assert";
 import { DocSubtype, DocType, SearchQuery } from "@ipfs-search/api-types";
 
+import { default as makeDebug } from "debug";
+const debug = makeDebug("ipfs-search:transform_query");
+
 // Unparsed queries from frontend.
 const stringQueries = {
   Document:
@@ -14,6 +17,7 @@ const stringQueries = {
 
 // Content types extracted from string queries.
 type parsedQuery = {
+  Input: string;
   ContentTypes: Set<string>;
   Negated: boolean;
 };
@@ -35,10 +39,12 @@ function parseQuery(stringQuery: string): parsedQuery[] {
   const matches = [...stringQuery.matchAll(regex)];
 
   return matches.map((match) => {
+    assert(match.input);
     assert(match.groups?.["types"]);
     const types = match.groups["types"].split("OR").map((t) => t.trim());
 
     return {
+      Input: match.input,
       ContentTypes: new Set(types),
       Negated: !!match.groups["negate"],
     };
@@ -47,10 +53,10 @@ function parseQuery(stringQuery: string): parsedQuery[] {
 
 function getQueryDocTypes(): [parsedQuery, DocSubtype[]][] {
   const queryDocTypes: Record<keyof typeof stringQueries, DocSubtype[]> = {
-    Document: [DocSubtype.Document],
     Audio: [DocSubtype.Audio],
     Video: [DocSubtype.Video],
     Image: [DocSubtype.Image],
+    Document: [DocSubtype.Document],
     Other: [
       // All remaining types. TODO:
       DocSubtype.Archive,
@@ -71,18 +77,23 @@ function getQueryDocTypes(): [parsedQuery, DocSubtype[]][] {
 const mappedQueryDocTypes = getQueryDocTypes();
 
 // Get subtypes from query, allows for multiple matches or empty list if none match.
-function getSubtypeFromQuery(query: string): DocSubtype[] {
-  const parsed = parseQuery(query);
-  if (!parsed) return [];
+function getSubtypeFromQuery(q: SearchQuery): SearchQuery {
+  const parsed = parseQuery(q.query);
+  if (!parsed) {
+    debug("Couldn't parse query");
+    return q;
+  }
 
   const subtypes: DocSubtype[] = [];
 
   for (const parsedQuery of parsed) {
-    const { ContentTypes, Negated } = parsedQuery;
+    const { ContentTypes, Negated, Input } = parsedQuery;
 
     for (const [required, doctypes] of mappedQueryDocTypes) {
-      // Not enough fields to match.
-      if (ContentTypes.size < required.ContentTypes.size) continue;
+      if (ContentTypes.size < required.ContentTypes.size) {
+        debug("Content type count doesn't match");
+        continue;
+      }
 
       // Everything in required types is present in parsed types.
       const typesMatch = [...required.ContentTypes].every((value) =>
@@ -90,20 +101,31 @@ function getSubtypeFromQuery(query: string): DocSubtype[] {
       );
       const negatedMatch = required.Negated === Negated;
 
-      if (typesMatch && negatedMatch) subtypes.push(...doctypes);
+      if (typesMatch && negatedMatch) {
+        subtypes.push(...doctypes);
+        q.query = q.query.replace(Input, "");
+
+        debug("Matched", doctypes);
+      }
     }
   }
 
-  return subtypes;
+  if (subtypes.length > 0) {
+    q.subtypes = subtypes;
+  }
+
+  debug("Returning transformed", q);
+  return q;
 }
 
 export class QueryTransformer {
   TransformQuery(q: SearchQuery): SearchQuery {
-    // Don't modify query in-place
-    const newq = { ...q };
+    debug("Transforming query", q);
 
-    if (newq.type === DocType.File && !newq.subtypes) {
-      newq.subtypes = getSubtypeFromQuery(newq.query);
+    if (q.type === DocType.File && !q.subtypes?.length) {
+      debug("Attempting to get subtypes from query");
+
+      return getSubtypeFromQuery(q);
     }
 
     return q;

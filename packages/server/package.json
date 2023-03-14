@@ -32,20 +32,30 @@
     "prepublishOnly": "build",
     "start": "node dist/main.js",
     "dev": "ts-node src/main.ts",
-    "dev:watch": "nodemon src/main.ts"
+    "dev:watch": "nodemon src/main.ts",
+    "test": "mocha",
+    "test:watch": "nodemon -e ts,json --exec \"npm run test\"",
+    "test:cover": "c8 --src src --all mocha"
   },
   "bugs": {
     "url": "https://github.com/ipfs-search/ipfs-search-api/issues"
   },
   "devDependencies": {
     "@tsconfig/node16-strictest-esm": "^1.0.3",
+    "@types/chai": "^4.3.4",
     "@types/debug": "^4.1.7",
     "@types/flat": "^5.0.2",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.14.2",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
+    "c8": "^7.13.0",
+    "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^8.35.0",
     "eslint-config-prettier": "^8.6.0",
+    "mocha": "^10.2.0",
+    "mocha-suppress-logs": "^0.3.1",
     "nodemon": "^2.0.21",
     "prettier": "^2.8.4",
     "ts-node": "^10.9.1",
