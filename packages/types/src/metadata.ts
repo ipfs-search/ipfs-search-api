@@ -1,4 +1,3 @@
-import type { CID } from "multiformats/cid";
 import type { DocType, DocSubtype } from "./doctypes.js";
 
 export interface Metadata {
@@ -13,5 +12,5 @@ export interface MetadataResult {
 }
 
 export interface MetadataQuery {
-  hash: CID;
+  hash: string;
 }

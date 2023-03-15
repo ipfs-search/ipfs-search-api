@@ -9,6 +9,9 @@ import {
   SearchQuery,
   SearchQueryType,
 } from "@ipfs-search/api-types";
+import { CID } from "multiformats";
+import createError from "http-errors";
+import { MetadataGetter } from "./metadata/metadata.js";
 
 // From Fastify type.
 type Logger = FastifyLoggerOptions | PinoLoggerOptions | boolean;
@@ -27,7 +30,8 @@ const envToLogger: Record<string, Logger> = {
   test: false,
 };
 
-type Querystring = Omit<SearchQuery, "query"> & { q: string };
+type SearchQuerystring = Omit<SearchQuery, "query"> & { q: string };
+type MetadataParams = { hash: string };
 
 function getSearchQueryTypes(): SearchQueryType[] {
   const t: SearchQueryType[] = Object.values(DocType);
@@ -38,9 +42,36 @@ export default function App(client: Client) {
   const app: FastifyInstance = Fastify({
     logger: envToLogger[conf.environment] ?? true,
   });
-  const searcher = new Searcher(client);
+  const searcher = new Searcher(client),
+    metadatagetter = new MetadataGetter(client);
 
-  app.get<{ Querystring: Querystring }>(
+  app.get<{ Params: MetadataParams }>(
+    "/metadata/:hash/",
+    {
+      schema: {
+        params: {
+          hash: {
+            type: "string",
+          },
+        },
+      },
+    },
+    async (request) => {
+      const { hash } = request.params;
+      let cid: CID;
+
+      // DIY validation
+      try {
+        cid = CID.parse(hash);
+      } catch (e) {
+        throw new createError.BadRequest();
+      }
+
+      return metadatagetter.getMetadata(cid);
+    }
+  );
+
+  app.get<{ Querystring: SearchQuerystring }>(
     "/search",
     {
       schema: {

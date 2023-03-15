@@ -20,7 +20,7 @@ export enum IndexAlias {
 
 type FileIndex = Exclude<IndexAlias, IndexAlias.Directories>;
 
-const fileIndexes: FileIndex[] = [
+export const FileIndexes: FileIndex[] = [
   IndexAlias.Archives,
   IndexAlias.Audio,
   IndexAlias.Data,
@@ -178,8 +178,7 @@ export class AliasResolver {
           return subtypes.map(getIndexAlias);
         } else {
           // Return all indexes.
-          debug(fileIndexes);
-          return fileIndexes.map((i) => i as FileIndex);
+          return FileIndexes;
         }
       default:
         throw new Error(`Unknown search result type: ${type}`);
