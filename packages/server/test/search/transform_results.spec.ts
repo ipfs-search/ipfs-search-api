@@ -47,6 +47,169 @@ describe("ResultTransformer", function () {
     });
   });
 
+  describe("document results", function () {
+    let results: SearchResultList;
+    let hits: SearchHitsMetadata<Source>;
+
+    before(async function () {
+      doctype = [DocType.File, DocSubtype.Document];
+
+      hits = {
+        total: 4,
+        max_score: 251.90108,
+        hits: [
+          {
+            _index: "ipfs_documents_v1",
+            _id: "viQY6YMJeJUg6mNiPnYvcOAXyKw",
+            _score: 44.856483,
+            _source: {
+              "first-seen": "2021-03-04T03:01:08Z",
+              metadata: {
+                "dc:title": ["bananas"],
+                "dc:creator": ["python-docx"],
+                "dcterms:created": ["2023-01-03T12:35:22Z"],
+                "Content-Type": ["application/pdf"],
+              },
+              references: [],
+              size: 9463,
+              "last-seen": "2021-12-18T04:24:31Z",
+              cid: "bafkreichryw5ih5pkrcctwfc6hz3jtvui22i6r5gjnfoxlqceppxkbrnyy",
+            },
+          },
+          // The same, but with no metadata and nothing to give a title.
+          {
+            _index: "ipfs_documents_v1",
+            _id: "viQY6YMJeJUg6mNiPnYvcOAXyKw",
+            _score: 44.856483,
+            _source: {
+              "first-seen": "2021-03-04T03:01:08Z",
+              references: [
+                {
+                  // CID names won't get used as title.
+                  name: "bafybeid3f46rrnd47bxwq3atut6qh426qpdxrznrtub6kw2fp6ednxsnc4",
+                  parent_hash:
+                    "bafybeid3f46rrnd47bxwq3atut6qh426qpdxrznrtub6kw2fp6ednxsnc4",
+                },
+              ],
+              size: 9463,
+              "last-seen": "2021-12-18T04:24:31Z",
+              cid: "bafkreichryw5ih5pkrcctwfc6hz3jtvui22i6r5gjnfoxlqceppxkbrnyy",
+            },
+          },
+          // Description and highlight.
+          {
+            _index: "ipfs_documents_v1",
+            _id: "RsFLD1/t1+bXVVvZwUFKsAmX4kI",
+            _score: 6.2701306,
+            _source: {
+              metadata: {
+                "dc:description": [
+                  "PII can be included in attachments which are included in events.  Minidumps , a common attachment type for native crash reports, may contain PII in various sect",
+                ],
+                // Very long title, should be shortened.
+                "dc:title": [
+                  "Attachment Scrubbing | Sentry Documentation PII can be included in attachments which are included in events.",
+                ],
+                "Content-Type": ["text/html; charset=UTF-8"],
+              },
+              references: [],
+              cid: "bafybeifd2ywsjllvpxhpkng5omx6ncuoiglebjtlp7gpnhwn2rcu6zr53y",
+            },
+            highlight: {
+              "metadata.dc:description": [
+                "Sensitive information,Personally identifiable information (<em>PII</em>),Anonymous information,Self-concept,Private&#x2F;public self,Consumer privacy,Digital privacy",
+              ],
+            },
+          },
+          // Title from reference.
+          {
+            _index: "ipfs_documents_v1",
+            _id: "viQY6YMJeJUg6mNiPnYvcOAXyKw",
+            _score: 44.856483,
+            _source: {
+              references: [
+                {
+                  name: "Happy",
+                  parent_hash:
+                    "bafybeid3f46rrnd47bxwq3atut6qh426qpdxrznrtub6kw2fp6ednxsnc4",
+                },
+              ],
+              cid: "bafybeifd2ywsjllvpxhpkng5omx6ncuoiglebjtlp7gpnhwn2rcu6zr53y",
+            },
+          },
+        ],
+      };
+
+      results = await transformer.TransformHits(hits);
+    });
+
+    describe("typical result", function () {
+      let firstResult: SearchResult;
+      let firstHit: SearchHit<Source>;
+
+      before(function () {
+        assert(results.hits[0] && hits.hits[0]); // Get TypeScript off my back.
+        firstResult = results.hits[0];
+        firstHit = hits.hits[0];
+      });
+
+      it("has correct hash", function () {
+        const hash = CID.parse(firstResult.hash);
+        expect(hash.version).to.equal(1);
+        expect(hash.equals(firstHit._source?.cid));
+      });
+
+      it("has correct title", function () {
+        assert(Array.isArray(firstHit._source?.metadata?.["dc:title"]));
+        expect(firstResult.title).to.equal(
+          firstHit._source?.metadata?.["dc:title"][0]
+        );
+      });
+    });
+
+    describe("result without metadata", function () {
+      let result: SearchResult;
+      // let hit: SearchHit<Source>;
+
+      before(function () {
+        assert(results.hits[1] && hits.hits[1]); // Get TypeScript off my back.
+        result = results.hits[1];
+        // hit = hits.hits[1];
+      });
+
+      it("has no title", function () {
+        expect(result.title).to.be.undefined;
+      });
+
+      it("has no mime type", function () {
+        expect(result.mimetype).to.be.undefined;
+      });
+    });
+
+    describe("result with description highlight", function () {
+      let result: SearchResult;
+      let hit: SearchHit<Source>;
+
+      before(function () {
+        assert(results.hits[2] && hits.hits[2]); // Get TypeScript off my back.
+        result = results.hits[2];
+        hit = hits.hits[2];
+      });
+
+      it("has correct title", function () {
+        assert(Array.isArray(hit._source?.metadata?.["dc:title"]));
+        expect(result.title).to.equal(hit._source?.metadata?.["dc:title"][0]);
+      });
+
+      it("description based on highlight", function () {
+        assert(Array.isArray(hit.highlight?.["metadata.dc:description"]));
+        expect(result.description).to.equal(
+          hit.highlight?.["metadata.dc:description"][0]
+        );
+      });
+    });
+  });
+
   describe("directory results", function () {
     let results: SearchResultList;
     let hits: SearchHitsMetadata<Source>;

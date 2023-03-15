@@ -32,7 +32,7 @@ export class Searcher {
     const newq = this.queryTransformer.TransformQuery(q);
 
     const body = getSearchQueryBody(newq).toJSON();
-    debug("body", body);
+    debug("Query:", body);
 
     const resp = await this.client.search<SearchResponse<Source>>({
       index: indexes,

@@ -1,6 +1,6 @@
 import esb from "elastic-builder";
 import type { SearchQuery } from "@ipfs-search/api-types";
-import { QueryFields } from "./queryfields.js";
+import { HighlightFields, QueryBoostFields } from "./queryfields.js";
 import {
   DocumentField,
   DocumentNestedField,
@@ -12,7 +12,10 @@ import { SourceFields } from "./source.js";
 import conf from "../common/conf.js";
 
 function queryStringQuery(q: string): esb.Query {
-  return esb.queryStringQuery(q).defaultOperator("AND").fields(QueryFields);
+  return esb
+    .queryStringQuery(q)
+    .defaultOperator("AND")
+    .fields(QueryBoostFields);
 }
 
 enum period {
@@ -58,7 +61,7 @@ function boostUnnamed(q: esb.Query): esb.BoostingQuery {
 
 function highlight(): esb.Highlight {
   return esb
-    .highlight(QueryFields)
+    .highlight(HighlightFields)
     .requireFieldMatch(false) // Content is not in source fields!
     .encoder("html")
     .numberOfFragments(1)

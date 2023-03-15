@@ -6,6 +6,7 @@ import {
   MetadataField,
   ReferenceField,
   DocumentNestedField,
+  FlatFieldName,
 } from "./documentfields.js";
 
 type nestedMapping = {
@@ -45,13 +46,20 @@ const queryFieldBoostMapping: boostMapping = {
   },
 };
 
-function getQueryFields(): string[] {
+const flattenedFields: Record<string, number> = flatten(queryFieldBoostMapping);
+
+function getQueryBoostFields(): string[] {
   // Take a nested Javascript object and flatten it, or unflatten an object with delimited keys.
-  const flattenedFields: Record<string, number> = flatten(
-    queryFieldBoostMapping
-  );
 
   return Object.entries(flattenedFields).map(([k, v]) => `${k}^${v}`);
 }
+export const QueryBoostFields = getQueryBoostFields();
 
-export const QueryFields = getQueryFields();
+// Order of fields determine priority in usage for description in results.
+export const HighlightFields: string[] = [
+  FlatFieldName([DocumentNestedField.Metadata, MetadataField.Title]),
+  FlatFieldName([DocumentNestedField.Metadata, MetadataField.Descripton]),
+  DocumentField.Content,
+  FlatFieldName([DocumentNestedField.Links, LinksField.Name]),
+  FlatFieldName([DocumentNestedField.Links, LinksField.Hash]),
+];

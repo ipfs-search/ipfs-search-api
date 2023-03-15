@@ -27,6 +27,7 @@ import {
   ReferenceField,
 } from "./documentfields.js";
 import { default as makeDebug } from "debug";
+import { HighlightFields } from "./queryfields.js";
 
 const debug = makeDebug("ipfs-search:transform_results");
 
@@ -35,18 +36,52 @@ type MetadataKey = keyof Metadata;
 const resultDescriptionLength = 250;
 const maxReferences = 8;
 
+const flatTitleFieldName = FlatFieldName([
+    DocumentNestedField.Metadata,
+    MetadataField.Title,
+  ]),
+  flatReferenceFieldName = FlatFieldName([
+    DocumentNestedField.References,
+    ReferenceField.Name,
+  ]),
+  flatLinkFieldNames = [
+    FlatFieldName([DocumentNestedField.Links, LinksField.Name]),
+    FlatFieldName([DocumentNestedField.Links, LinksField.Hash]),
+  ];
+
+function getDescriptionFromHighlight(
+  result: SearchHit<Source>
+): string | undefined {
+  // No highlight, early return.
+  if (!result.highlight) return;
+
+  for (const f of HighlightFields) {
+    // Skip title .
+    if (f === flatTitleFieldName) continue;
+
+    const h = result.highlight[f];
+    if (h) {
+      debug("Description highlight", h, f);
+      assert(h[0]);
+
+      // Reference name matching
+      if (flatLinkFieldNames.includes(f)) {
+        return `Links to &ldquo;${h[0]}&rdquo;`;
+      }
+      return h[0];
+    }
+  }
+
+  return;
+}
+
 // Return the first one from the priority list or null.
 function getTitlesFromHighlight(result: SearchHit<Source>): string[] {
-  const metadataFields = [MetadataField.Title].map((f) =>
-    FlatFieldName([DocumentNestedField.Metadata, f])
-  );
-  const referencesFields = [ReferenceField.Name].map((f) =>
-    FlatFieldName([DocumentNestedField.References, f])
-  );
-  const highlightFields: string[] = metadataFields.concat(referencesFields);
+  // No highlight, early return.
+  if (!result.highlight) [];
 
   if (result.highlight) {
-    for (const f of highlightFields) {
+    for (const f of [flatTitleFieldName, flatReferenceFieldName]) {
       const h = result.highlight[f];
 
       if (h) {
@@ -74,13 +109,23 @@ function getTitlesFromMetadata(src: Source): string[] {
   return titles;
 }
 
+function isCID(v: string): boolean {
+  // TODO: asCID isn't behaving well, try this way...
+  try {
+    CID.parse(v);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 // Attempt to get title from references.
-function getTitleReferences(src: Source): string[] {
+function getTitleFromReferences(src: Source): string[] {
   if (!src.references) return [];
   assert(Array.isArray(src.references));
 
   return src.references
-    .filter((i) => i && i.name && i.name.length > 1 && !CID.asCID(i.name))
+    .filter((i) => i && i.name && i.name.length > 1 && !isCID(i.name))
     .map((i) => i.name as string);
 }
 
@@ -95,7 +140,7 @@ function getTitle(result: SearchHit<Source>): string | undefined {
   // Create array of all remaining titles
   const src = result._source;
   assert(src);
-  const titleFuncs = [getTitlesFromMetadata, getTitleReferences];
+  const titleFuncs = [getTitlesFromMetadata, getTitleFromReferences];
   const titlesLs = titleFuncs.map((f) => f(src));
   const titles = titlesLs.flat();
   if (titles.length === 0) return undefined;
@@ -104,36 +149,6 @@ function getTitle(result: SearchHit<Source>): string | undefined {
   const longestTitle = titles.reduce((a, b) => (a.length > b.length ? a : b));
 
   return longestTitle;
-}
-
-function getDescriptionFromHightlight(
-  result: SearchHit<Source>
-): string | undefined {
-  const hl = result.highlight;
-
-  if (hl) {
-    const content = hl[DocumentField.Content];
-    if (content) {
-      assert(content[0]);
-      return content[0];
-    }
-
-    const linkName =
-      hl[FlatFieldName([DocumentNestedField.Links, LinksField.Name])];
-    if (linkName) {
-      // Reference name matching
-      return `Links to &ldquo;${linkName[0]}&rdquo;`;
-    }
-
-    const linkHash =
-      hl[FlatFieldName([DocumentNestedField.Links, LinksField.Hash])];
-    if (linkHash) {
-      // Reference name matching
-      return `Links to &ldquo;${linkHash[0]}&rdquo;`;
-    }
-  }
-
-  return undefined;
 }
 
 function getDescriptionFromMetadata(src: Source): string | undefined {
@@ -150,8 +165,11 @@ function getDescriptionFromMetadata(src: Source): string | undefined {
 
 function getDescription(result: SearchHit<Source>): string | undefined {
   // Use highlights, if available
-  const dHl = getDescriptionFromHightlight(result);
-  if (dHl) return dHl;
+  const dHl = getDescriptionFromHighlight(result);
+  if (dHl) {
+    debug("Returning description from highlight", dHl);
+    return dHl;
+  }
 
   assert(result._source);
   const dMd = getDescriptionFromMetadata(result._source);
@@ -250,6 +268,7 @@ export class ResultTransformer {
     for (const [index, hit] of hits.hits.entries()) {
       results[index] = await this.transformHit(hit);
       debug("Transformed", hit, "into", results[index]);
+      debug(hit._source?.metadata);
     }
 
     return {
