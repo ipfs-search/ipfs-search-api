@@ -26,5 +26,6 @@ RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 # Start server
 USER node:node
+ENV IPFS_SEARCH_API_HOST=0.0.0.0
 EXPOSE 9615
 CMD ["npm", "start"]
