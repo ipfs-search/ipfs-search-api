@@ -75,7 +75,6 @@
     "flat": "^5.0.2",
     "js-htmlencode": "^0.3.0",
     "multiformats": "^11.0.1",
-    "pino-pretty": "^9.4.0",
-    "typescript-json-schema": "^0.55.0"
+    "pino-pretty": "^9.4.0"
   }
 }
