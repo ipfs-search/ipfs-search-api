@@ -10,7 +10,10 @@ const start = async () => {
   const app = App(client);
 
   try {
-    await app.listen(conf.apiPort, conf.apiHost);
+    await app.listen({
+      host: conf.apiHost,
+      port: conf.apiPort,
+    });
   } catch (err) {
     app.log.error(err);
     process.exit(1);
