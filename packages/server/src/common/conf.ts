@@ -7,6 +7,8 @@ export enum Environment {
 }
 
 export type Configuration = {
+  apiHost: string;
+  apiPort: number;
   openSearchURL: string;
   environment: Environment;
   pageSize: number;
@@ -20,6 +22,8 @@ function intFromEnv(k: string): number | undefined {
 }
 
 const conf: Configuration = {
+  apiHost: process.env["IPFS_SEARCH_API_HOST"] || "localhost",
+  apiPort: intFromEnv("IPFS_SEARCH_API_PORT") || 9615,
   openSearchURL: process.env["OPENSEARCH_URL"] || "http://localhost:9200",
   environment:
     (process.env["NODE_ENV"] as Environment) || Environment.Development,

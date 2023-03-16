@@ -110,7 +110,7 @@ function getTitlesFromMetadata(src: Source): string[] {
 }
 
 function isCID(v: string): boolean {
-  // TODO: asCID isn't behaving well, try this way...
+  // asCID isn't behaving well, try this way...
   try {
     CID.parse(v);
     return true;

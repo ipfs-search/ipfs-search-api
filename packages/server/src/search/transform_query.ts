@@ -58,7 +58,7 @@ function getQueryDocTypes(): [parsedQuery, DocSubtype[]][] {
     Image: [DocSubtype.Image],
     Document: [DocSubtype.Document],
     Other: [
-      // All remaining types. TODO:
+      // All remaining types.
       DocSubtype.Archive,
       DocSubtype.Unknown,
       DocSubtype.Data,
