@@ -1,44 +1,28 @@
-FROM node:16-alpine as build-base
+# syntax = docker/dockerfile:1.2
+FROM node:16-alpine as base
 WORKDIR /app
 
-# Build build-base image, with lerna
+# Install build dependencies
 COPY package.json package-lock.json lerna.json tsconfig.json ./
-RUN npm ci
-
-# Install types build dependencies
-FROM build-base AS types
 COPY packages/types/package.json ./packages/types/
-RUN npm ci
-
-# Build types
-COPY packages/types/ ./packages/types/
-RUN npx lerna run build --scope=@ipfs-search/api-types
-
-# Install server build dependencies
-FROM build-base AS server
 COPY packages/server/package.json ./packages/server/
-RUN npm ci
+
+FROM base as build
+RUN --mount=type=cache,target=/root/.npm npx lerna bootstrap --ci --scope=@ipfs-search/api-server --include-dependencies
 
 # Build server
-COPY --from=types /app/packages/types/ ./packages/types/
-COPY packages/server/ ./packages/server/
-RUN npx lerna run build --scope=@ipfs-search/api-server
+COPY packages/ ./packages/
+RUN npx lerna run build --scope=@ipfs-search/api-server --include-dependencies
 
 # Slim run-time stage
-FROM node:16-alpine
+FROM base
 
-WORKDIR /app
-
-COPY --from=build-base /app/package-lock.json /app/package.json ./
-
-COPY --from=server /app/packages/types/package.json ./packages/types/package.json
-COPY --from=server /app/packages/types/dist/ ./packages/types/dist/
-COPY --from=server /app/packages/server/package.json ./packages/server/package.json
-COPY --from=server /app/packages/server/dist/ ./packages/server/dist/
+COPY --from=build /app/packages/types/dist/ ./packages/types/dist/
+COPY --from=build /app/packages/server/dist/ ./packages/server/dist/
 
 WORKDIR /app/packages/server
 
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 # Start server
 USER node:node
