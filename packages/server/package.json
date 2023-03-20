@@ -65,14 +65,15 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "@fastify/etag": "^4.2.0",
     "@ipfs-search/api-types": "^2.0.0-alpha",
     "@opensearch-project/opensearch": "^2.2.0",
-    "http-errors": "^2.0.0",
     "debug": "^4.3.4",
     "downsize": "^0.0.8",
     "elastic-builder": "^2.18",
     "fastify": "^4.14.1",
     "flat": "^5.0.2",
+    "http-errors": "^2.0.0",
     "js-htmlencode": "^0.3.0",
     "multiformats": "^11.0.1",
     "pino-pretty": "^9.4.0"

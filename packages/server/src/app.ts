@@ -12,6 +12,7 @@ import {
 import { CID } from "multiformats";
 import createError from "http-errors";
 import { MetadataGetter } from "./metadata/metadata.js";
+import { fastifyEtag } from "@fastify/etag";
 
 // From Fastify type.
 type Logger = FastifyLoggerOptions | PinoLoggerOptions | boolean;
@@ -42,6 +43,9 @@ export default function App(client: Client) {
   const app: FastifyInstance = Fastify({
     logger: envToLogger[conf.environment] ?? true,
   });
+
+  app.register(fastifyEtag);
+
   const searcher = new Searcher(client),
     metadatagetter = new MetadataGetter(client);
 
