@@ -28,6 +28,7 @@ import {
 } from "./documentfields.js";
 import { default as makeDebug } from "debug";
 import { HighlightFields } from "./queryfields.js";
+import conf from "../common/conf.js";
 
 const debug = makeDebug("ipfs-search:transform_results");
 
@@ -273,6 +274,8 @@ export class ResultTransformer {
 
     return {
       hits: results,
+      page_size: conf.pageSize,
+      page_count: Math.ceil(hits.total / conf.pageSize),
       total: hits.total,
       maxScore: hits.max_score || 0,
     };
