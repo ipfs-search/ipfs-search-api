@@ -6,6 +6,7 @@ const start = async () => {
   const client = new Client({
     node: conf.openSearchURL,
     maxRetries: 0, // Retries should be handled by load balancer.
+    requestTimeout: conf.requestTimeout,
   });
   const app = App(client);
 
