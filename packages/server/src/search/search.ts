@@ -8,7 +8,7 @@ import getSearchQueryBody from "./query.js";
 import type { Source } from "./source.js";
 import { QueryTransformer } from "./transform_query.js";
 import { ResultTransformer } from "./transform_results.js";
-// import conf from "../common/conf.js";
+import conf from "../common/conf.js";
 
 const debug = makeDebugger("ipfs-search:search");
 
@@ -46,8 +46,8 @@ export class Searcher {
       preference: "_local",
 
       // Turn this on once we hit production.
-      // timeout: conf.shardTimeout, // Specifies the period of time to wait for a response from each shard. If no response is received before the timeout expires, the request fails and returns an error.
-      // allow_partial_search_results: true, // If true, returns partial results if there are shard request timeouts or shard failures. If false, returns an error with no partial results.
+      timeout: conf.shardTimeout, // Specifies the period of time to wait for a response from each shard. If no response is received before the timeout expires, the request fails and returns an error.
+      allow_partial_search_results: true, // If true, returns partial results if there are shard request timeouts or shard failures. If false, returns an error with no partial results.
 
       rest_total_hits_as_int: true,
     });
