@@ -24,5 +24,7 @@ export interface SearchResult {
 export interface SearchResultList {
   total: number;
   maxScore: number;
+  page_size: number;
+  page_count: number;
   hits: Array<SearchResult>;
 }
