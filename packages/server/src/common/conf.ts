@@ -13,7 +13,7 @@ export type Configuration = {
   environment: Environment;
   pageSize: number;
   maxPage: number;
-  timeout: string;
+  shardTimeout: string;
 };
 
 function intFromEnv(k: string): number | undefined {
@@ -30,7 +30,7 @@ const conf: Configuration = {
     (process.env["NODE_ENV"] as Environment) || Environment.Development,
   pageSize: intFromEnv("PAGE_SIZE") || 15,
   maxPage: intFromEnv("MAX_PAGE") || 50,
-  timeout: process.env["IPFS_SEARCH_API_TIMEOUT"] || "9s",
+  shardTimeout: process.env["IPFS_SEARCH_API_TIMEOUT"] || "800ms",
 };
 
 export default conf;
