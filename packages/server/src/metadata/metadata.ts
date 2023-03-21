@@ -49,16 +49,15 @@ export class MetadataGetter {
     assert(found[0]);
     const doc = found[0];
 
-    assert(doc._source?.metadata);
-    assert(doc._version);
+    assert(doc._version, "No version.");
 
     const [, subtype] = await this.aliasResolver.GetDocType(doc._index);
-    assert(subtype);
+    assert(subtype, "No subtype.");
 
     return {
       version: doc._version,
       type: DocType.File,
-      metadata: doc._source?.metadata,
+      metadata: doc._source?.metadata || {},
       subtype,
     };
   }
