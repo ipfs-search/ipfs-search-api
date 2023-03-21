@@ -39,11 +39,10 @@ export class MetadataGetter {
 
     if (found.length === 0) throw new createError.NotFound();
 
-    // Note: we're requesting both CID's, so we should expect 2 replies.
-    assert(
-      found.length <= 2,
-      "Found more than two responses to metadata request."
-    );
+    // We're requesting both CID's, so we should expect 2 replies.
+    if (found.length <= 2) {
+      debug("Found more than two responses to metadata request:", found);
+    }
 
     // Pick the first doc.
     assert(found[0]);
