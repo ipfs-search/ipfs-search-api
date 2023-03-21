@@ -118,6 +118,10 @@ function getSubtypeFromQuery(q: SearchQuery): SearchQuery {
   return q;
 }
 
+// TODO: Transform stuff like:
+// metadata.title -> metadata.dc:title
+// metadata.description -> metadata.dc:description
+
 export class QueryTransformer {
   TransformQuery(q: SearchQuery): SearchQuery {
     debug("Transforming query", q);
