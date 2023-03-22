@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import GetSubTypes from "../../src/search/transform_getsubtypes.js";
+import GetSubTypes from "../../../../src/search/transform/query/subtypes.js";
 import { expect } from "chai";
 import { DocSubtype, DocType, SearchQuery } from "@ipfs-search/api-types";
 

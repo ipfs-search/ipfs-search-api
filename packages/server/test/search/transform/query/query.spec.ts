@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { DocType, DocSubtype, SearchQuery } from "@ipfs-search/api-types";
-import { QueryTransformer } from "../../src/search/transform_query.js";
+import { QueryTransformer } from "../../../../src/search/transform/query/query.js";
 
 // import { default as makeDebug } from "debug";
 // const debug = makeDebug("ipfs-search:test");

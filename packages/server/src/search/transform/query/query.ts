@@ -1,8 +1,8 @@
 import type { SearchQuery } from "@ipfs-search/api-types";
 
 import { default as makeDebug } from "debug";
-import TransformMetadataFieldNames from "./transform_fieldnames.js";
-import GetSubtypeFromQuery from "./transform_getsubtypes.js";
+import TransformMetadataFieldNames from "./fieldnames.js";
+import GetSubtypeFromQuery from "./subtypes.js";
 const debug = makeDebug("ipfs-search:transform_query");
 
 type transformFunc = (q: SearchQuery) => SearchQuery;

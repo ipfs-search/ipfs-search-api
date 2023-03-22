@@ -1,5 +1,5 @@
 import { DocType, SearchQuery } from "@ipfs-search/api-types";
-import TransformMetadataFieldNames from "../../src/search/transform_fieldnames.js";
+import TransformMetadataFieldNames from "../../../../src/search/transform/query/fieldnames.js";
 import { expect } from "chai";
 
 describe("TransformMetadataFieldNames", function () {

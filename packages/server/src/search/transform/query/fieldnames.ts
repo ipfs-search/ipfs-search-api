@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { DocType, SearchQuery } from "@ipfs-search/api-types";
-import { MetadataField } from "./documentfields.js";
+import { MetadataField } from "../../documentfields.js";
 
 function getMetadataFieldMapping(): Record<string, string> {
   const m: Record<string, MetadataField> = {

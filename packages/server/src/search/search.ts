@@ -6,8 +6,8 @@ import type { SearchResponse } from "@opensearch-project/opensearch/api/types.js
 import { AliasResolver } from "../common/indexalias.js";
 import getSearchQueryBody from "./query.js";
 import type { Source } from "./source.js";
-import { QueryTransformer } from "./transform_query.js";
-import { ResultTransformer } from "./transform_results.js";
+import { QueryTransformer } from "./transform/query/query.js";
+import { ResultTransformer } from "./transform/results/results.js";
 import conf from "../common/conf.js";
 
 const debug = makeDebugger("ipfs-search:search");

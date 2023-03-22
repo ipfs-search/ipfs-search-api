@@ -17,7 +17,7 @@ import type {
   Reference as SourceReference,
   Source,
   Metadata,
-} from "./source.js";
+} from "../../source.js";
 import {
   DocumentField,
   DocumentNestedField,
@@ -25,10 +25,10 @@ import {
   LinksField,
   MetadataField,
   ReferenceField,
-} from "./documentfields.js";
+} from "../../documentfields.js";
 import { default as makeDebug } from "debug";
-import { HighlightFields } from "./queryfields.js";
-import conf from "../common/conf.js";
+import { HighlightFields } from "../../queryfields.js";
+import conf from "../../../common/conf.js";
 
 const debug = makeDebug("ipfs-search:transform_results");
 

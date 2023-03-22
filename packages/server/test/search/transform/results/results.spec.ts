@@ -11,8 +11,8 @@ import type {
   SearchHitsMetadata,
 } from "@opensearch-project/opensearch/api/types.js";
 import { expect, use } from "chai";
-import type { Reference, Source } from "../../src/search/source.js";
-import { ResultTransformer } from "../../src/search/transform_results.js";
+import type { Reference, Source } from "../../../../src/search/source.js";
+import { ResultTransformer } from "../../../../src/search/transform/results/results.js";
 import chaiDateTime from "chai-datetime";
 
 use(chaiDateTime);
