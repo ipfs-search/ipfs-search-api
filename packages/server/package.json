@@ -30,7 +30,7 @@
   "scripts": {
     "build": "tsc -p tsconfig-build.json",
     "prepublishOnly": "build",
-    "start": "node dist/main.js",
+    "start": "node --enable-source-maps dist/main.js",
     "dev": "ts-node src/main.ts",
     "dev:watch": "nodemon src/main.ts",
     "test": "mocha",
