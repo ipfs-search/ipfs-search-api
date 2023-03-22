@@ -56,6 +56,8 @@ export default function App(client: Client) {
         params: {
           hash: {
             type: "string",
+            minLength: 5,
+            maxLength: 120,
           },
         },
       },
