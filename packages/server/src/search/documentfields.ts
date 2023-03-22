@@ -14,10 +14,14 @@ export enum LinksField {
 export enum MetadataField {
   Title = "dc:title",
   Creator = "dc:creator",
-  Identifier = "dc:Identifier",
+  Identifier = "dc:identifier",
   Descripton = "dc:description",
   ContentType = "Content-Type",
   Created = "dcterms:created",
+  Width = "tiff:ImageWidth",
+  Height = "tiff:ImageLength",
+  Language = "dc:language",
+  Album = "xmpDM:album",
 }
 
 export enum DocumentField {
