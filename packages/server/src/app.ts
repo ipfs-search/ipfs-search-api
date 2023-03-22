@@ -119,8 +119,16 @@ export default function App(client: Client) {
         subtypes: subtypes ? subtypes : [],
       };
 
-      // TODO: Test whether 429's are propagated.
-      return searcher.search(query);
+      // Abort logic
+      const controller = new AbortController();
+      request.raw.on("close", () => {
+        if (request.raw.aborted) {
+          controller.abort();
+          app.log.info("request aborted");
+        }
+      });
+
+      return searcher.search(query, controller.signal);
     }
   );
 

@@ -25,7 +25,10 @@ export class Searcher {
     this.queryTransformer = new QueryTransformer();
   }
 
-  async search(q: SearchQuery): Promise<SearchResultList> {
+  async search(
+    q: SearchQuery,
+    signal?: AbortSignal
+  ): Promise<SearchResultList> {
     const indexes = this.aliasResolver.GetIndexAliases(q.type, q.subtypes);
     assert(indexes.length, "No indexes to search for.");
     debug("indexes", indexes);
@@ -35,7 +38,7 @@ export class Searcher {
     const body = getSearchQueryBody(newq).toJSON();
     debug("Query:", body);
 
-    const resp = await this.client.search<SearchResponse<Source>>({
+    const req = this.client.search<SearchResponse<Source>>({
       index: indexes,
       body: body,
 
@@ -51,6 +54,12 @@ export class Searcher {
 
       rest_total_hits_as_int: true,
     });
+
+    // Attach abort signal
+    if (signal) signal.addEventListener("abort", req.abort);
+
+    // Await promise
+    const resp = await req;
 
     return this.resultTransformer.TransformHits(resp.body.hits);
   }
