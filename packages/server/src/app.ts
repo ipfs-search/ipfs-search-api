@@ -85,6 +85,8 @@ export default function App(client: Client) {
             q: {
               type: "string",
               maxLength: 1684,
+              // Validate maximum number of words
+              pattern: `^(\\S+\\s+){0,${conf.maxTerms}}\\S+$`,
             },
             page: {
               type: "integer",
@@ -112,6 +114,7 @@ export default function App(client: Client) {
     },
     async (request) => {
       const { page, type, subtypes } = request.query;
+
       const query: SearchQuery = {
         query: request.query.q,
         page,

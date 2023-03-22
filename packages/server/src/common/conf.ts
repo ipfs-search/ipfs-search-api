@@ -15,6 +15,7 @@ export type Configuration = {
   maxPage: number;
   shardTimeout: string;
   requestTimeout: number;
+  maxTerms: number;
 };
 
 function intFromEnv(k: string): number | undefined {
@@ -33,6 +34,7 @@ const conf: Configuration = {
   maxPage: intFromEnv("MAX_PAGE") || 50,
   shardTimeout: process.env["IPFS_SEARCH_API_SHARD_TIMEOUT"] || "9s", // After 9s, just return whatever we have.
   requestTimeout: intFromEnv("IPFS_SEARCH_API_REQUEST_TIMEOUT") || 10000, // 10s
+  maxTerms: intFromEnv("IPFS_SEARCH_API_MAX_TERMS") || 100,
 };
 
 export default conf;
